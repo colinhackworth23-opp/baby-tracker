@@ -185,6 +185,20 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .refresh-btn { font-size: 11px; font-weight: 600; color: var(--blue); background: none; border: none; padding: 4px 8px; min-height: 32px; }
 .spacer { height: 12px; }
 
+/* History pagination */
+.load-more-btn {
+  display: block; width: calc(100% - 32px); margin: 10px 16px;
+  padding: 12px; background: var(--bg); color: var(--text2);
+  border: 0.5px solid var(--border2); border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; text-align: center;
+}
+.load-more-btn:active { opacity: 0.7; }
+.history-count {
+  text-align: center; font-size: 11px; color: var(--text3);
+  padding: 6px 0 2px;
+}
+
+
 /* Duration drum picker */
 .duration-row { display: flex; align-items: stretch; gap: 0; background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
 .duration-side { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px 8px; }
@@ -659,7 +673,7 @@ function showScreen(name) {
   document.getElementById('headerTitle').textContent = settings.babyName||'Baby Log';
   document.getElementById('headerSub').textContent = subs[name]||'';
   if(name==='today') renderToday();
-  if(name==='history') renderHistory();
+  if(name==='history') { _historyDaysShown=3; renderHistory(); }
   if(name==='settings') renderSettings();
   if(name==='analytics') renderAnalytics();
   if(name==='log') {
@@ -1023,6 +1037,7 @@ function pushEntry(e){
 
 // ── Two-way sync ──
 function entryToRow(e){
+  // Human-readable detail (kept for the Sheet view + backward compatibility)
   let detail='';
   if(e.type==='feed') detail=e.feedType==='breast'?`L:${e.leftMins||0}m R:${e.rightMins||0}m`:`${e.feedType} ${e.oz||''}oz`.trim();
   else if(e.type==='sleep') detail=`${formatDuration(e.durationMins)} @ ${e.location}`;
@@ -1037,7 +1052,9 @@ function entryToRow(e){
     if(e.stoolFlags&&e.stoolFlags.length) ex.push('f:'+e.stoolFlags.join(','));
     if(ex.length) detail+=' | '+ex.join(' | ');
   }
-  return {id:e.id,ts:e.ts,type:e.type,detail,notes:e.notes||'',loggedBy:e.loggedBy||myName()};
+  // Full structured payload — the source of truth on read
+  const json=JSON.stringify(e);
+  return {id:e.id,ts:e.ts,type:e.type,detail,notes:e.notes||'',loggedBy:e.loggedBy||myName(),json};
 }
 
 function enqueueOutbound(entry){
@@ -1094,8 +1111,21 @@ function mergeRemote(rows){
   const ids=new Set(state.map(e=>e.id));
   let added=0;
   rows.forEach(row=>{
-    const[id,ts,type,detail,notes,loggedBy]=row;
+    const[id,ts,type,detail,notes,loggedBy,json]=row;
     if(!id||ids.has(id)||tombstones.includes(id)) return;
+
+    // Preferred path: full JSON blob (column 7). Bulletproof — no parsing.
+    if(json){
+      try{
+        const entry=JSON.parse(json);
+        if(entry&&entry.id===id){
+          state.push(entry); ids.add(id); added++;
+          return;
+        }
+      }catch(err){ /* fall through to legacy string parse */ }
+    }
+
+    // Legacy path: reconstruct from the readable detail string (pre-JSON rows)
     const entry={id,ts,type,notes:notes||'',loggedBy:loggedBy||'?'};
     if(type==='feed'){
       if(detail&&detail.startsWith('L:')){
@@ -1144,28 +1174,88 @@ function setSyncStatus(status){
 
 // ── History ──
 let historyFilter='all';
-function setHistoryFilter(f,btn){
-  historyFilter=f;
-  btn.closest('.seg-ctrl').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); renderHistory();
+// History pagination state
+let _historyDaysShown = 3;
+const HISTORY_PAGE_SIZE = 7;
+
+function setHistoryFilter(f, btn) {
+  historyFilter = f;
+  _historyDaysShown = 3; // reset to first page on filter change
+  btn.closest('.seg-ctrl').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory();
 }
-function renderHistory(){
-  let entries=[...state].sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-  if(historyFilter!=='all') entries=entries.filter(e=>e.type===historyFilter);
-  const el=document.getElementById('historyList');
-  if(!entries.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No entries yet.</div></div>`;return;}
-  const groups={};
-  entries.forEach(e=>{
-    const day=new Date(e.ts).toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'});
-    if(!groups[day]) groups[day]=[];
+
+function loadMoreHistory() {
+  _historyDaysShown += HISTORY_PAGE_SIZE;
+  renderHistory();
+  // Scroll load-more button into view smoothly
+  const btn = document.getElementById('loadMoreBtn');
+  if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function renderHistory() {
+  let entries = [...state].sort((a,b) => new Date(b.ts) - new Date(a.ts));
+  if (historyFilter !== 'all') entries = entries.filter(e => e.type === historyFilter);
+  const el = document.getElementById('historyList');
+  if (!entries.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No entries yet.</div></div>`;
+    return;
+  }
+
+  // Group all entries by calendar day
+  const groups = {};
+  const dayKeys = []; // ordered most-recent first
+  entries.forEach(e => {
+    const day = new Date(e.ts).toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+    if (!groups[day]) { groups[day] = []; dayKeys.push(day); }
     groups[day].push(e);
   });
-  let html='';
-  Object.entries(groups).forEach(([day,items])=>{
-    html+=`<div style="padding:8px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);">${day}</div>`;
-    html+=items.map(e=>entryRow(e)).join('');
+
+  // Deduplicate dayKeys (forEach can push same day multiple times)
+  const uniqueDays = [...new Set(dayKeys)];
+  const visibleDays = uniqueDays.slice(0, _historyDaysShown);
+  const hasMore = uniqueDays.length > _historyDaysShown;
+  const hiddenCount = entries.filter(e => {
+    const day = new Date(e.ts).toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+    return !visibleDays.includes(day);
+  }).length;
+
+  let innerHtml = '';
+  visibleDays.forEach(day => {
+    innerHtml += `<div style="padding:8px 14px 4px;font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);">${day}</div>`;
+    innerHtml += groups[day].map(e => entryRow(e)).join('');
   });
-  el.innerHTML=html;
+
+  el.innerHTML = innerHtml;
+
+  // Append load-more button + count outside the section card
+  const existing = document.getElementById('loadMoreBtn');
+  if (existing) existing.remove();
+  const existingCount = document.getElementById('historyCountLabel');
+  if (existingCount) existingCount.remove();
+
+  if (hasMore) {
+    const countEl = document.createElement('div');
+    countEl.id = 'historyCountLabel';
+    countEl.className = 'history-count';
+    countEl.textContent = `Showing ${entries.length - hiddenCount} of ${entries.length} entries`;
+    el.closest('.section').after(countEl);
+
+    const btn = document.createElement('button');
+    btn.id = 'loadMoreBtn';
+    btn.className = 'load-more-btn';
+    btn.textContent = `Load ${Math.min(HISTORY_PAGE_SIZE, uniqueDays.length - _historyDaysShown)} more days (${hiddenCount} entries)`;
+    btn.onclick = loadMoreHistory;
+    countEl.after(btn);
+  } else if (uniqueDays.length > 3) {
+    // All loaded — show total count
+    const countEl = document.createElement('div');
+    countEl.id = 'historyCountLabel';
+    countEl.className = 'history-count';
+    countEl.textContent = `All ${entries.length} entries shown`;
+    el.closest('.section').after(countEl);
+  }
 }
 
 // ── Settings ──
