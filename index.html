@@ -47,7 +47,7 @@ body {
 .screen.active { display: block; }
 button { font-family: inherit; cursor: pointer; }
 input, textarea, select { font-family: inherit; font-size: 16px; }
-
+ 
 .header {
   position: sticky; top: 0; z-index: 20;
   background: var(--bg); border-bottom: 0.5px solid var(--border);
@@ -61,7 +61,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .sync-loading { background: var(--amber-bg); color: var(--amber); }
 .sync-ok { background: var(--green-bg); color: var(--green); }
 .sync-err { background: var(--red-bg); color: var(--red); }
-
+ 
 .bottom-nav {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: 430px;
@@ -75,7 +75,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .nav-icon { font-size: 20px; line-height: 1; }
 .nav-lbl { font-size: 10px; color: var(--text3); font-weight: 500; }
 .nav-btn.active .nav-lbl { color: var(--text); font-weight: 700; }
-
+ 
 .section {
   margin: 12px 16px 0; background: var(--bg);
   border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden;
@@ -100,7 +100,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .badge-red { background: var(--red-bg); color: var(--red); }
 .badge-purple { background: var(--purple-bg); color: var(--purple); }
 .badge-pink { background: var(--pink-bg); color: var(--pink); }
-
+ 
 .callout {
   margin: 12px 16px 0; padding: 10px 14px;
   border-radius: var(--radius); font-size: 12px; line-height: 1.55; font-weight: 500;
@@ -109,7 +109,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .c-green { background: var(--green-bg); color: var(--green); }
 .c-amber { background: var(--amber-bg); color: var(--amber); }
 .c-purple { background: var(--purple-bg); color: var(--purple); }
-
+ 
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px 16px 0; }
 .stat-tile {
   background: var(--bg); border-radius: var(--radius);
@@ -119,7 +119,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .stat-val { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
 .stat-unit { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: 2px; }
 .stat-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; }
-
+ 
 .form-section { margin: 12px 16px 0; }
 .form-label {
   font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
@@ -136,7 +136,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
   border: none; background: transparent; color: var(--text2); min-height: 36px;
 }
 .seg-btn.active { background: var(--bg); color: var(--text); border-radius: var(--radius-sm); }
-
+ 
 .save-btn {
   display: block; width: calc(100% - 32px); margin: 16px 16px 0; padding: 14px;
   background: var(--text); color: var(--bg); border: none; border-radius: var(--radius);
@@ -144,7 +144,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 }
 .save-btn:active { opacity: 0.8; }
 .save-btn:disabled { opacity: 0.35; }
-
+ 
 .log-entry {
   padding: 11px 14px; border-bottom: 0.5px solid var(--border);
   display: flex; align-items: flex-start; gap: 10px;
@@ -161,7 +161,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
   background: var(--purple-bg); color: var(--purple);
 }
 .who-badge.me { background: var(--blue-bg); color: var(--blue); }
-
+ 
 .timer-display { text-align: center; padding: 24px 16px 0; }
 .timer-num { font-size: 52px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -1px; }
 .timer-label { font-size: 13px; color: var(--text2); margin-top: 4px; }
@@ -173,22 +173,132 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 }
 .timer-btn.primary { background: var(--text); color: var(--bg); border-color: transparent; }
 .timer-btn:active { opacity: 0.7; }
-
+ 
 .empty { text-align: center; padding: 40px 24px; color: var(--text3); }
 .empty-icon { font-size: 36px; margin-bottom: 10px; }
 .empty-text { font-size: 13px; line-height: 1.5; }
-
+ 
 .refresh-row {
   display: flex; align-items: center; justify-content: space-between; padding: 8px 16px 0;
 }
 .refresh-lbl { font-size: 11px; color: var(--text3); }
 .refresh-btn { font-size: 11px; font-weight: 600; color: var(--blue); background: none; border: none; padding: 4px 8px; min-height: 32px; }
 .spacer { height: 12px; }
+ 
+/* Duration drum picker */
+.duration-row { display: flex; align-items: stretch; gap: 0; background: var(--bg); border: 0.5px solid var(--border2); border-radius: var(--radius); overflow: hidden; }
+.duration-side { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px 8px; }
+.duration-divider { width: 0.5px; background: var(--border2); }
+.duration-side-lbl { font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 8px; letter-spacing: 0.04em; }
+.drum-wrap {
+  width: 90px; height: 140px; overflow: hidden; position: relative;
+  cursor: grab;
+}
+.drum-wrap:active { cursor: grabbing; }
+.drum-wrap::before, .drum-wrap::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 48px;
+  z-index: 2; pointer-events: none;
+}
+.drum-wrap::before { top: 0; background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%); }
+.drum-wrap::after { bottom: 0; background: linear-gradient(to top, var(--bg) 0%, transparent 100%); }
+.drum-wrap .drum-selector {
+  position: absolute; left: 6px; right: 6px; top: 50%; transform: translateY(-50%);
+  height: 44px; border-radius: 8px; background: rgba(24, 95, 165, 0.12); border: 2px solid var(--blue);
+  pointer-events: none; z-index: 1;
+}
+.drum-list {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 48px 0; transition: transform 0.15s cubic-bezier(0.25,0.46,0.45,0.94);
+  user-select: none; -webkit-user-select: none;
+}
+.drum-item {
+  height: 44px; display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 600; color: var(--text3); width: 90px;
+  transition: color 0.1s, font-size 0.1s;
+}
+.drum-item.selected { color: var(--blue); font-size: 19px; font-weight: 800; }
+ 
+ 
+/* Night mode */
+body.night-mode {
+  --bg: #0d0d0d; --bg2: #111111; --bg3: #1a1a1a;
+  --text: #e8e8e8; --text2: #888888; --text3: #555555;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+}
+body.night-mode .header { background: #0a0a0a; }
+body.night-mode .bottom-nav { background: #0a0a0a; }
+.night-banner {
+  background: #1a1040; color: #a89cf7;
+  font-size: 11px; font-weight: 600; text-align: center;
+  padding: 5px 16px; letter-spacing: 0.04em;
+}
+ 
+/* Analytics */
+.chart-wrap { padding: 12px 16px 0; }
+.chart-title { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+.bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 2px; transition: height 0.3s; }
+.bar-lbl { font-size: 9px; color: var(--text3); font-weight: 500; }
+.bar-val { font-size: 9px; color: var(--text2); font-weight: 700; }
+.bar-feed { background: var(--blue); }
+.bar-sleep { background: var(--purple); }
+.bar-diaper { background: var(--green); }
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 16px 0; }
+.analytics-tile { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; text-align: center; }
+.analytics-val { font-size: 20px; font-weight: 700; color: var(--text); }
+.analytics-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.range-ctrl { display: flex; gap: 6px; padding: 12px 16px 0; }
+.range-btn { flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 600; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--bg3); color: var(--text2); }
+.range-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
+.doc-summary { margin: 12px 16px 0; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.doc-summary-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.doc-copy-btn { font-size: 11px; font-weight: 600; color: var(--blue); background: none; border: none; padding: 0; }
+.doc-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+.doc-row:last-child { border-bottom: none; }
+.doc-key { color: var(--text2); }
+.doc-val { font-weight: 700; color: var(--text); }
+ 
+/* Diaper detail grid */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.detail-chip {
+  padding: 8px 4px; border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border2); background: var(--bg3);
+  font-size: 11px; font-weight: 600; color: var(--text2);
+  text-align: center; cursor: pointer;
+}
+.detail-chip.active { background: var(--purple-bg); color: var(--purple); border-color: var(--purple); }
+ 
+ 
+/* Quick log bar */
+.quick-bar { padding: 12px 16px 0; }
+.quick-bar-label { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+.quick-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.quick-btn {
+  background: var(--bg); border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 10px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--text); min-height: 60px;
+  justify-content: center;
+}
+.quick-btn:active { opacity: 0.6; transform: scale(0.97); }
+.quick-btn-icon { font-size: 22px; line-height: 1; }
+.quick-btn-lbl { font-size: 10px; font-weight: 600; color: var(--text2); text-align: center; line-height: 1.3; }
+.quick-toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--bg);
+  font-size: 13px; font-weight: 600; padding: 8px 18px;
+  border-radius: 20px; z-index: 99; opacity: 0;
+  transition: opacity 0.2s; white-space: nowrap; pointer-events: none;
+}
+.quick-toast.show { opacity: 1; }
+ 
 </style>
 </head>
 <body>
 <div class="app">
-
+ 
+  <div class="night-banner" id="nightBanner" style="display:none;">🌙 Night mode — screen dimmed</div>
   <div class="header">
     <div class="header-row">
       <div>
@@ -198,9 +308,39 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
       <div class="header-sync sync-idle" id="syncStatus">Live</div>
     </div>
   </div>
-
+ 
   <!-- TODAY -->
   <div class="screen active" id="screen-today">
+    <div class="quick-bar">
+      <div class="quick-bar-label">Quick log</div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="quickFeed('breast')">
+          <span class="quick-btn-icon">🤱</span>
+          <span class="quick-btn-lbl">Start nursing</span>
+        </button>
+        <button class="quick-btn" onclick="quickDiaper('wet')">
+          <span class="quick-btn-icon">💧</span>
+          <span class="quick-btn-lbl">Wet diaper</span>
+        </button>
+        <button class="quick-btn" onclick="quickDiaper('dirty')">
+          <span class="quick-btn-icon">💩</span>
+          <span class="quick-btn-lbl">Dirty diaper</span>
+        </button>
+        <button class="quick-btn" onclick="quickSleepToggle()">
+          <span class="quick-btn-icon" id="quickSleepIcon">😴</span>
+          <span class="quick-btn-lbl" id="quickSleepLbl">Baby sleeping</span>
+        </button>
+        <button class="quick-btn" onclick="quickFeed('bottle')">
+          <span class="quick-btn-icon">🍼</span>
+          <span class="quick-btn-lbl">Bottle feed</span>
+        </button>
+        <button class="quick-btn" onclick="quickDiaper('both')">
+          <span class="quick-btn-icon">💩💧</span>
+          <span class="quick-btn-lbl">Wet & dirty</span>
+        </button>
+      </div>
+    </div>
+ 
     <div class="refresh-row">
       <span class="refresh-lbl" id="lastSyncLabel">Last synced: never</span>
       <button class="refresh-btn" onclick="fetchRemote(true)">Refresh ↻</button>
@@ -213,7 +353,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
     </div>
     <div class="spacer"></div>
   </div>
-
+ 
   <!-- LOG -->
   <div class="screen" id="screen-log">
     <div style="padding:12px 16px 0;">
@@ -223,7 +363,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
         <button class="seg-btn" onclick="setLogType('diaper')">🌱 Diaper</button>
       </div>
     </div>
-
+ 
     <div id="form-feed">
       <div class="form-section">
         <label class="form-label">Type</label>
@@ -234,22 +374,56 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
         </div>
       </div>
       <div id="breast-timer">
-        <div class="timer-display">
-          <div class="timer-num" id="timerDisplay">00:00</div>
-          <div class="timer-label" id="timerSideLabel">Left side</div>
+        <!-- Starting time -->
+        <div class="form-section">
+          <label class="form-label">Starting time</label>
+          <input class="form-input" type="datetime-local" id="feedTime">
         </div>
-        <div class="timer-btns">
-          <button class="timer-btn" onclick="switchSide()">Switch side</button>
-          <button class="timer-btn primary" id="timerBtn" onclick="toggleTimer()">Start</button>
-        </div>
-        <div class="section" style="margin-top:12px;">
-          <div class="data-row">
-            <div class="row-label">Left side<div class="row-sub">duration</div></div>
-            <div class="row-value" id="leftDuration">—</div>
+        <!-- Duration pickers -->
+        <div class="form-section">
+          <label class="form-label">Duration</label>
+          <div class="duration-row">
+            <div class="duration-side">
+              <div class="duration-side-lbl">🤱 Left</div>
+              <div class="drum-wrap" id="drumLeft">
+                <div class="drum-list" id="drumLeftList"></div>
+              </div>
+            </div>
+            <div class="duration-divider"></div>
+            <div class="duration-side">
+              <div class="duration-side-lbl">🤱 Right</div>
+              <div class="drum-wrap" id="drumRight">
+                <div class="drum-list" id="drumRightList"></div>
+              </div>
+            </div>
           </div>
-          <div class="data-row">
-            <div class="row-label">Right side<div class="row-sub">duration</div></div>
-            <div class="row-value" id="rightDuration">—</div>
+        </div>
+        <!-- Live timer as fallback -->
+        <div class="form-section">
+          <div class="seg-ctrl" style="margin-bottom:0;">
+            <button class="seg-btn active" id="breastModeManual" onclick="setBreastMode('manual')">Enter manually</button>
+            <button class="seg-btn" id="breastModeTimer" onclick="setBreastMode('timer')">Use live timer</button>
+          </div>
+        </div>
+        <!-- Live timer (hidden by default) -->
+        <div id="liveTimerSection" style="display:none;">
+          <div class="timer-display">
+            <div class="timer-num" id="timerDisplay">00:00</div>
+            <div class="timer-label" id="timerSideLabel">Left side</div>
+          </div>
+          <div class="timer-btns">
+            <button class="timer-btn" onclick="switchSide()">Switch side</button>
+            <button class="timer-btn primary" id="timerBtn" onclick="toggleTimer()">Start</button>
+          </div>
+          <div class="section" style="margin-top:12px;">
+            <div class="data-row">
+              <div class="row-label">Left side<div class="row-sub">duration</div></div>
+              <div class="row-value" id="leftDurationTimer">—</div>
+            </div>
+            <div class="data-row">
+              <div class="row-label">Right side<div class="row-sub">duration</div></div>
+              <div class="row-value" id="rightDurationTimer">—</div>
+            </div>
           </div>
         </div>
       </div>
@@ -265,7 +439,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
       </div>
       <button class="save-btn" onclick="saveFeed()">Log Feed</button>
     </div>
-
+ 
     <div id="form-sleep" style="display:none;">
       <div class="timer-display">
         <div class="timer-num" id="sleepTimerDisplay">00:00</div>
@@ -293,12 +467,16 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
         </div>
       </div>
       <div class="form-section">
+        <label class="form-label">Time logged</label>
+        <input class="form-input" type="datetime-local" id="sleepTime">
+      </div>
+      <div class="form-section">
         <label class="form-label">Notes (optional)</label>
         <input class="form-input" type="text" id="sleepNotes" placeholder="e.g. woke once">
       </div>
       <button class="save-btn" onclick="saveSleep()">Log Sleep</button>
     </div>
-
+ 
     <div id="form-diaper" style="display:none;">
       <div class="form-section" style="margin-top:12px;">
         <label class="form-label">Type</label>
@@ -308,15 +486,74 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
           <button class="seg-btn" onclick="setDiaperType(this,'both')">Both</button>
         </div>
       </div>
+      <div class="form-section" id="stoolDetailSection" style="display:none;">
+        <label class="form-label">Stool color</label>
+        <div class="detail-grid" id="stoolColorGrid">
+          <button class="detail-chip" onclick="toggleChip(this,'color','yellow')">🟡 Yellow</button>
+          <button class="detail-chip" onclick="toggleChip(this,'color','green')">🟢 Green</button>
+          <button class="detail-chip" onclick="toggleChip(this,'color','brown')">🟤 Brown</button>
+          <button class="detail-chip" onclick="toggleChip(this,'color','black')">⚫ Black</button>
+          <button class="detail-chip" onclick="toggleChip(this,'color','red')">🔴 Red</button>
+          <button class="detail-chip" onclick="toggleChip(this,'color','white')">⚪ White/Grey</button>
+        </div>
+      </div>
+      <div class="form-section" id="stoolConsistencySection" style="display:none;">
+        <label class="form-label">Consistency</label>
+        <div class="detail-grid">
+          <button class="detail-chip" onclick="toggleChip(this,'consistency','seedy')">Seedy</button>
+          <button class="detail-chip" onclick="toggleChip(this,'consistency','pasty')">Pasty</button>
+          <button class="detail-chip" onclick="toggleChip(this,'consistency','loose')">Loose</button>
+          <button class="detail-chip" onclick="toggleChip(this,'consistency','watery')">Watery</button>
+          <button class="detail-chip" onclick="toggleChip(this,'consistency','hard')">Hard</button>
+          <button class="detail-chip" onclick="toggleChip(this,'consistency','mucus')">Mucus</button>
+        </div>
+      </div>
+      <div class="form-section" id="stoolFlagsSection" style="display:none;">
+        <label class="form-label">Other flags</label>
+        <div class="detail-grid">
+          <button class="detail-chip" onclick="toggleChip(this,'flag','blood')">🩸 Blood</button>
+          <button class="detail-chip" onclick="toggleChip(this,'flag','rash')">🔴 Rash</button>
+          <button class="detail-chip" onclick="toggleChip(this,'flag','straining')">😣 Straining</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <label class="form-label">Time logged</label>
+        <input class="form-input" type="datetime-local" id="diaperTime">
+      </div>
       <div class="form-section">
         <label class="form-label">Notes (optional)</label>
-        <input class="form-input" type="text" id="diaperNotes" placeholder="e.g. color, rash">
+        <input class="form-input" type="text" id="diaperNotes" placeholder="any other details">
       </div>
       <button class="save-btn" onclick="saveDiaper()">Log Diaper</button>
     </div>
     <div class="spacer"></div>
   </div>
-
+ 
+ 
+  <!-- ANALYTICS -->
+  <div class="screen" id="screen-analytics">
+    <div class="range-ctrl">
+      <button class="range-btn active" onclick="setRange('7',this)">7 days</button>
+      <button class="range-btn" onclick="setRange('30',this)">30 days</button>
+      <button class="range-btn" onclick="setRange('90',this)">90 days</button>
+    </div>
+    <div class="analytics-grid" id="analyticsStats"></div>
+    <div class="chart-wrap">
+      <div class="chart-title">Feeds per day</div>
+      <div class="bar-chart" id="feedChart"></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Sleep per day</div>
+      <div class="bar-chart" id="sleepChart"></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Diapers per day</div>
+      <div class="bar-chart" id="diaperChart"></div>
+    </div>
+    <div class="doc-summary" id="docSummary"></div>
+    <div class="spacer"></div>
+  </div>
+ 
   <!-- HISTORY -->
   <div class="screen" id="screen-history">
     <div style="padding:12px 16px 0;">
@@ -332,7 +569,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
     </div>
     <div class="spacer"></div>
   </div>
-
+ 
   <!-- SETTINGS -->
   <div class="screen" id="screen-settings">
     <div class="callout c-blue" style="margin-top:12px;">Set your name so entries show who logged what on both phones.</div>
@@ -368,13 +605,17 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
     </div>
     <div class="spacer"></div>
   </div>
-
+ 
+  <div class="quick-toast" id="quickToast"></div>
   <div class="bottom-nav">
     <button class="nav-btn active" id="nav-today" onclick="showScreen('today')">
       <div class="nav-icon">🏠</div><span class="nav-lbl">Today</span>
     </button>
     <button class="nav-btn" id="nav-log" onclick="showScreen('log')">
       <div class="nav-icon">➕</div><span class="nav-lbl">Log</span>
+    </button>
+    <button class="nav-btn" id="nav-analytics" onclick="showScreen('analytics')">
+      <div class="nav-icon">📊</div><span class="nav-lbl">Trends</span>
     </button>
     <button class="nav-btn" id="nav-history" onclick="showScreen('history')">
       <div class="nav-icon">📋</div><span class="nav-lbl">History</span>
@@ -384,40 +625,47 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
     </button>
   </div>
 </div>
-
+ 
 <script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzSyvszdYQ2gJKLpo2DN9Nh_oB7B_3QR81J_bgVN6YVBXiMc_fwDd7bKnJfJGEVDyPZ/exec';
 const SHARED_KEY = 'babylog2025';
 const APP_KEY = 'babylog';
 const POLL_MS = 30000;
-
+ 
 const store = {
   get(k, d=null) { try { const r=localStorage.getItem(`${APP_KEY}:${k}`); return r?JSON.parse(r):d; } catch{return d;} },
   set(k, v) { try { localStorage.setItem(`${APP_KEY}:${k}`,JSON.stringify(v)); } catch(e){console.warn(e);} }
 };
-
+ 
 let state = store.get('entries', []);
 let settings = store.get('settings', { name:'', babyName:'', birthdate:'' });
 let lastSyncTs = store.get('lastSync', null);
 let outboundQueue = store.get('outboundQueue', []);
+let tombstones = store.get('tombstones', []);
 let isSending = false;
 let pollTimer = null;
-
+ 
 // ── Nav ──
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
-  document.getElementById('nav-'+name).classList.add('active');
-  const subs={today:"Today's summary",log:"Log entry",history:"History",settings:"Settings"};
+  const navEl = document.getElementById('nav-'+name);
+  if (navEl) navEl.classList.add('active');
+  const subs={today:"Today's summary",log:"Log entry",history:"History",analytics:"Trends",settings:"Settings"};
   document.getElementById('headerTitle').textContent = settings.babyName||'Baby Log';
   document.getElementById('headerSub').textContent = subs[name]||'';
   if(name==='today') renderToday();
   if(name==='history') renderHistory();
   if(name==='settings') renderSettings();
-  if(name==='log') resetLogForms();
+  if(name==='analytics') renderAnalytics();
+  if(name==='log') {
+    resetLogForms();
+    // Set feedTime after paint so it's always current
+    setTimeout(() => { const ft=document.getElementById('feedTime'); if(ft) ft.value=nowLocal(); }, 0);
+  }
 }
-
+ 
 // ── Helpers ──
 function myName() { return settings.name||'You'; }
 function minutesSince(ts) { return Math.floor((Date.now()-new Date(ts).getTime())/60000); }
@@ -439,7 +687,7 @@ function getBabyAge() {
   if(days<30) return `${Math.floor(days/7)}w ${days%7}d`;
   const m=Math.floor(days/30.44); return `${m}m ${Math.floor(days-m*30.44)}d`;
 }
-
+ 
 // ── Today ──
 function renderToday() {
   const dayStart=new Date(); dayStart.setHours(0,0,0,0);
@@ -451,7 +699,7 @@ function renderToday() {
   const totalSleep=sleeps.reduce((s,e)=>s+(e.durationMins||0),0);
   const lastFeed=feeds.length?feeds[feeds.length-1]:null;
   const sinceLastFeed=lastFeed?minutesSince(lastFeed.ts):null;
-
+ 
   document.getElementById('statsGrid').innerHTML=`
     <div class="stat-tile"><div class="stat-icon">🍼</div>
       <div class="stat-val">${feeds.length}</div><div class="stat-unit">feeds today</div>
@@ -465,14 +713,14 @@ function renderToday() {
     <div class="stat-tile"><div class="stat-icon">📅</div>
       <div class="stat-val">${getBabyAge()}</div><div class="stat-unit">old</div>
       <div class="stat-lbl">${settings.birthdate?'since birth':'set birthdate'}</div></div>`;
-
+ 
   let hint='';
   if(sinceLastFeed!==null&&sinceLastFeed>=180)
     hint=`<div class="callout c-amber" style="margin-top:12px;">It's been ${formatDuration(sinceLastFeed)} since the last feed — may be time soon.</div>`;
   else if(!feeds.length)
     hint=`<div class="callout c-blue" style="margin-top:12px;">No feeds logged yet today. Tap Log to get started.</div>`;
   document.getElementById('summaryCallout').innerHTML=hint;
-
+ 
   const recent=[...state].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).slice(0,20);
   const el=document.getElementById('recentLog');
   if(!recent.length){
@@ -482,7 +730,7 @@ function renderToday() {
   el.innerHTML=recent.map(e=>entryRow(e)).join('');
   updateLastSyncLabel();
 }
-
+ 
 function entryRow(e) {
   const timeStr=new Date(e.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   const dateStr=new Date(e.ts).toLocaleDateString([],{month:'short',day:'numeric'});
@@ -490,7 +738,7 @@ function entryRow(e) {
   const who=e.loggedBy||myName();
   const whoBadge=`<span class="who-badge${isMe?' me':''}">${who}</span>`;
   let icon,main,sub='',badge='';
-
+ 
   if(e.type==='feed'){
     icon='🍼'; const ft=e.feedType||'breast';
     badge=`<span class="badge badge-blue">${ft}</span>`;
@@ -512,9 +760,13 @@ function entryRow(e) {
   } else {
     icon=e.diaperType==='dirty'?'💩':e.diaperType==='both'?'💩💧':'💧';
     main=e.diaperType==='dirty'?'Dirty diaper':e.diaperType==='both'?'Wet & dirty':'Wet diaper';
-    sub=e.notes||'';
+    const details=[];
+    if(e.stoolColor) details.push(e.stoolColor);
+    if(e.stoolConsistency) { if(Array.isArray(e.stoolConsistency)) details.push(...e.stoolConsistency); else details.push(e.stoolConsistency); }
+    if(e.stoolFlags&&e.stoolFlags.length) details.push(...e.stoolFlags);
+    sub=(details.length?details.join(' · '):'')+(e.notes?(details.length?' · ':'')+e.notes:'');
   }
-
+ 
   return `<div class="log-entry">
     <div class="log-entry-icon">${icon}</div>
     <div class="log-entry-body">
@@ -528,13 +780,21 @@ function entryRow(e) {
     </div>
   </div>`;
 }
-
+ 
 function deleteEntry(id) {
   state=state.filter(e=>e.id!==id);
   store.set('entries',state);
+  // Tombstone so the entry doesn't resurrect from the sheet on next sync
+  tombstones.push(id);
+  if(tombstones.length>500) tombstones=tombstones.slice(-500);
+  store.set('tombstones',tombstones);
+  // Also remove from outbound queue if not yet sent
+  outboundQueue=outboundQueue.filter(q=>q.id!==id);
+  store.set('outboundQueue',outboundQueue);
+  _lastRenderHash=null;
   renderToday(); renderHistory();
 }
-
+ 
 function updateLastSyncLabel() {
   const el=document.getElementById('lastSyncLabel');
   if(!el) return;
@@ -542,18 +802,24 @@ function updateLastSyncLabel() {
   const mins=minutesSince(lastSyncTs);
   el.textContent=mins<1?'Synced just now':`Synced ${formatDuration(mins)} ago`;
 }
-
+ 
 // ── Log forms ──
 let currentLogType='feed',currentFeedType='breast',currentDiaperType='wet',currentSleepLoc='Crib';
 let timerInterval=null,timerRunning=false,timerSide='left',leftMs=0,rightMs=0,sideStartMs=null;
 let sleepTimerInterval=null,sleepTimerRunning=false,sleepTimerStart=null;
-
+ 
 function resetLogForms(){
   stopTimer(); leftMs=0; rightMs=0; timerSide='left'; updateTimerDisplay();
-  document.getElementById('leftDuration').textContent='—';
-  document.getElementById('rightDuration').textContent='—';
+  document.getElementById('leftDurationTimer') && (document.getElementById('leftDurationTimer').textContent='—');
+  document.getElementById('rightDurationTimer') && (document.getElementById('rightDurationTimer').textContent='—');
   document.getElementById('timerBtn').textContent='Start';
   document.getElementById('timerSideLabel').textContent='Left side';
+  breastMode = 'manual';
+  document.getElementById('breastModeManual') && document.getElementById('breastModeManual').classList.add('active');
+  document.getElementById('breastModeTimer') && document.getElementById('breastModeTimer').classList.remove('active');
+  document.getElementById('liveTimerSection') && (document.getElementById('liveTimerSection').style.display = 'none');
+  // Defer drum init until screen is visible and painted
+  setTimeout(initDrums, 80);
   document.getElementById('bottleOz').value='';
   document.getElementById('feedNotes').value='';
   stopSleepTimer();
@@ -564,8 +830,18 @@ function resetLogForms(){
   document.getElementById('sleepEnd').value='';
   document.getElementById('sleepNotes').value='';
   document.getElementById('diaperNotes').value='';
+  // Set retroactive time defaults to now
+  const nowStr = nowLocal();
+  const st = document.getElementById('sleepTime'); if(st) st.value = nowStr;
+  const dt = document.getElementById('diaperTime'); if(dt) dt.value = nowStr;
+  // Reset diaper detail
+  diaperDetail = { color: null, consistency: [], flags: [] };
+  document.querySelectorAll('.detail-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('stoolDetailSection').style.display = 'none';
+  document.getElementById('stoolConsistencySection').style.display = 'none';
+  document.getElementById('stoolFlagsSection').style.display = 'none';
 }
-
+ 
 function setLogType(type){
   currentLogType=type;
   document.querySelectorAll('#screen-log>div:first-child .seg-btn').forEach((b,i)=>{
@@ -575,7 +851,7 @@ function setLogType(type){
   document.getElementById('form-sleep').style.display=type==='sleep'?'':'none';
   document.getElementById('form-diaper').style.display=type==='diaper'?'':'none';
 }
-
+ 
 function setFeedType(type){
   currentFeedType=type;
   document.querySelectorAll('#form-feed .seg-ctrl:first-of-type .seg-btn').forEach(b=>{
@@ -584,19 +860,15 @@ function setFeedType(type){
   document.getElementById('breast-timer').style.display=type==='breast'?'':'none';
   document.getElementById('bottle-form').style.display=type!=='breast'?'':'none';
 }
-
-function setDiaperType(btn,type){
-  currentDiaperType=type;
-  btn.closest('.seg-ctrl').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
+ 
+// setDiaperType moved to new diaper detail section above
+ 
 function setSleepLoc(btn){
   currentSleepLoc=btn.textContent;
   btn.closest('.seg-ctrl').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
-
+ 
 function toggleTimer(){
   if(!timerRunning){
     timerRunning=true; sideStartMs=Date.now()-(timerSide==='left'?leftMs:rightMs);
@@ -619,8 +891,8 @@ function tickTimer(){
 }
 function updateTimerDisplay(){
   document.getElementById('timerDisplay').textContent=msToMS(timerSide==='left'?leftMs:rightMs);
-  document.getElementById('leftDuration').textContent=leftMs>0?`${Math.round(leftMs/60000)}m`:'—';
-  document.getElementById('rightDuration').textContent=rightMs>0?`${Math.round(rightMs/60000)}m`:'—';
+  const _ld=document.getElementById('leftDurationTimer'); if(_ld) _ld.textContent=leftMs>0?`${Math.round(leftMs/60000)}m`:'—';
+  const _rd=document.getElementById('rightDurationTimer'); if(_rd) _rd.textContent=rightMs>0?`${Math.round(rightMs/60000)}m`:'—';
 }
 function switchSide(){
   const was=timerRunning; stopTimer();
@@ -630,7 +902,7 @@ function switchSide(){
   if(was){ timerRunning=true; timerInterval=setInterval(tickTimer,250); document.getElementById('timerBtn').textContent='Pause'; }
   updateTimerDisplay();
 }
-
+ 
 function toggleSleepTimer(){
   if(!sleepTimerRunning){
     sleepTimerRunning=true; sleepTimerStart=Date.now();
@@ -653,14 +925,25 @@ function stopSleepTimer(){
   if(sleepTimerInterval) clearInterval(sleepTimerInterval);
   sleepTimerInterval=null; sleepTimerRunning=false;
 }
-
+ 
 // ── Save ──
 function saveFeed(){
   stopTimer();
-  const entry={id:genId(),ts:new Date().toISOString(),type:'feed',feedType:currentFeedType,loggedBy:myName()};
+  const entry={id:genId(),ts:getEntryTs('feedTime'),type:'feed',feedType:currentFeedType,loggedBy:myName()};
   if(currentFeedType==='breast'){
-    const lm=Math.round(leftMs/60000),rm=Math.round(rightMs/60000);
-    if(lm===0&&rm===0){alert('Start the timer first.');return;}
+    let lm, rm;
+    if (breastMode === 'timer') {
+      lm = Math.round(leftMs/60000);
+      rm = Math.round(rightMs/60000);
+      if(lm===0&&rm===0){alert('Start the timer first.');return;}
+      // sync timer durations to drum for display
+      const ld = document.getElementById('leftDurationTimer'); if(ld) ld.textContent = lm+'m';
+      const rd = document.getElementById('rightDurationTimer'); if(rd) rd.textContent = rm+'m';
+    } else {
+      lm = drumLeftVal;
+      rm = drumRightVal;
+      if(lm===0&&rm===0){alert('Set a duration for at least one side.');return;}
+    }
     entry.leftMins=lm; entry.rightMins=rm;
   } else {
     const oz=parseFloat(document.getElementById('bottleOz').value);
@@ -670,7 +953,7 @@ function saveFeed(){
   entry.notes=document.getElementById('feedNotes').value.trim();
   pushEntry(entry); showScreen('today');
 }
-
+ 
 function saveSleep(){
   stopSleepTimer();
   const sv=document.getElementById('sleepStart').value,ev=document.getElementById('sleepEnd').value;
@@ -680,37 +963,54 @@ function saveSleep(){
     let m=(eh*60+em)-(sh*60+sm); if(m<0) m+=24*60; dur=m;
   }
   if(dur<=0){alert('Please record a sleep duration.');return;}
-  const entry={id:genId(),ts:new Date().toISOString(),type:'sleep',durationMins:dur,location:currentSleepLoc,loggedBy:myName(),notes:document.getElementById('sleepNotes').value.trim()};
+  const entry={id:genId(),ts:getEntryTs('sleepTime'),type:'sleep',durationMins:dur,location:currentSleepLoc,loggedBy:myName(),notes:document.getElementById('sleepNotes').value.trim()};
   pushEntry(entry); showScreen('today');
 }
-
+ 
 function saveDiaper(){
-  const entry={id:genId(),ts:new Date().toISOString(),type:'diaper',diaperType:currentDiaperType,loggedBy:myName(),notes:document.getElementById('diaperNotes').value.trim()};
+  const entry={
+    id:genId(), ts:getEntryTs('diaperTime'), type:'diaper',
+    diaperType:currentDiaperType, loggedBy:myName(),
+    notes:document.getElementById('diaperNotes').value.trim(),
+    stoolColor: diaperDetail.color || null,
+    stoolConsistency: diaperDetail.consistency && diaperDetail.consistency.length ? [...diaperDetail.consistency] : null,
+    stoolFlags: diaperDetail.flags.length ? [...diaperDetail.flags] : null,
+  };
   pushEntry(entry); showScreen('today');
 }
-
+ 
 function pushEntry(e){
   state.push(e);
   store.set('entries',state);
   enqueueOutbound(e);
 }
-
+ 
 // ── Two-way sync ──
 function entryToRow(e){
   let detail='';
   if(e.type==='feed') detail=e.feedType==='breast'?`L:${e.leftMins||0}m R:${e.rightMins||0}m`:`${e.feedType} ${e.oz||''}oz`.trim();
   else if(e.type==='sleep') detail=`${formatDuration(e.durationMins)} @ ${e.location}`;
-  else detail=e.diaperType;
+  else {
+    detail=e.diaperType;
+    const ex=[];
+    if(e.stoolColor) ex.push('c:'+e.stoolColor);
+    if(e.stoolConsistency){
+      const k=Array.isArray(e.stoolConsistency)?e.stoolConsistency.join(','):e.stoolConsistency;
+      if(k) ex.push('k:'+k);
+    }
+    if(e.stoolFlags&&e.stoolFlags.length) ex.push('f:'+e.stoolFlags.join(','));
+    if(ex.length) detail+=' | '+ex.join(' | ');
+  }
   return {id:e.id,ts:e.ts,type:e.type,detail,notes:e.notes||'',loggedBy:e.loggedBy||myName()};
 }
-
+ 
 function enqueueOutbound(entry){
   outboundQueue.push({...entryToRow(entry),tries:0});
   store.set('outboundQueue',outboundQueue);
   setSyncStatus('loading');
   drainOutbound();
 }
-
+ 
 async function drainOutbound(){
   if(isSending||!navigator.onLine) return;
   isSending=true;
@@ -735,7 +1035,7 @@ async function drainOutbound(){
   isSending=false;
   fetchRemote(false);
 }
-
+ 
 async function fetchRemote(manual=false){
   if(!navigator.onLine){setSyncStatus('err');return;}
   if(manual) setSyncStatus('loading');
@@ -747,19 +1047,19 @@ async function fetchRemote(manual=false){
     lastSyncTs=new Date().toISOString();
     store.set('lastSync',lastSyncTs);
     setSyncStatus('ok');
-    renderToday();
+    renderTodayIfChanged();
     if(document.getElementById('screen-history').classList.contains('active')) renderHistory();
   } catch {
     setSyncStatus('err');
   }
 }
-
+ 
 function mergeRemote(rows){
   const ids=new Set(state.map(e=>e.id));
   let added=0;
   rows.forEach(row=>{
     const[id,ts,type,detail,notes,loggedBy]=row;
-    if(!id||ids.has(id)) return;
+    if(!id||ids.has(id)||tombstones.includes(id)) return;
     const entry={id,ts,type,notes:notes||'',loggedBy:loggedBy||'?'};
     if(type==='feed'){
       if(detail&&detail.startsWith('L:')){
@@ -780,13 +1080,19 @@ function mergeRemote(rows){
       else if(m) entry.durationMins=parseInt(m[1]);
       else entry.durationMins=0;
     } else if(type==='diaper'){
-      entry.diaperType=detail||'wet';
+      const parts=(detail||'wet').split('|').map(s=>s.trim());
+      entry.diaperType=parts[0]||'wet';
+      parts.slice(1).forEach(p=>{
+        if(p.startsWith('c:')) entry.stoolColor=p.slice(2);
+        else if(p.startsWith('k:')) entry.stoolConsistency=p.slice(2).split(',');
+        else if(p.startsWith('f:')) entry.stoolFlags=p.slice(2).split(',');
+      });
     }
     state.push(entry); ids.add(id); added++;
   });
   if(added>0) store.set('entries',state);
 }
-
+ 
 function setSyncStatus(status){
   const el=document.getElementById('syncStatus');
   if(!el) return;
@@ -799,7 +1105,7 @@ function setSyncStatus(status){
   else if(status==='err'){el.classList.add('sync-err');el.textContent='Offline';}
   else{el.classList.add('sync-idle');el.textContent='Live';}
 }
-
+ 
 // ── History ──
 let historyFilter='all';
 function setHistoryFilter(f,btn){
@@ -825,7 +1131,7 @@ function renderHistory(){
   });
   el.innerHTML=html;
 }
-
+ 
 // ── Settings ──
 function renderSettings(){
   document.getElementById('userName').value=settings.name||'';
@@ -845,13 +1151,419 @@ function clearLocalData(){
   state=[];store.set('entries',state);
   renderToday();renderHistory();renderSettings();
 }
-
+ 
+ 
+// ── Quick log ──
+let quickSleepStart = null;
+let quickSleepTimer = null;
+ 
+let _toastTimer = null;
+function showToast(msg, undoId) {
+  const t = document.getElementById('quickToast');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  if (undoId) {
+    t.innerHTML = `${msg} <button onclick="undoQuick('${undoId}')" style="background:none;border:none;color:#6db3f2;font-weight:700;font-size:13px;margin-left:10px;padding:0;text-decoration:underline;">Undo</button>`;
+  } else {
+    t.textContent = msg;
+  }
+  t.classList.add('show');
+  _toastTimer = setTimeout(() => t.classList.remove('show'), undoId ? 5000 : 2000);
+}
+ 
+function undoQuick(id) {
+  deleteEntry(id);
+  const t = document.getElementById('quickToast');
+  t.textContent = 'Entry removed';
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 1500);
+}
+ 
+function quickDiaper(type) {
+  const entry = { id: genId(), ts: new Date().toISOString(), type: 'diaper', diaperType: type, loggedBy: myName(), notes: '' };
+  pushEntry(entry);
+  const labels = { wet: 'Wet diaper logged', dirty: 'Dirty diaper logged', both: 'Wet & dirty logged' };
+  showToast(labels[type] || 'Diaper logged', entry.id);
+}
+ 
+function quickFeed(type) {
+  if (type === 'breast') {
+    // Jump to log tab with breast timer pre-started
+    showScreen('log');
+    setLogType('feed');
+    setFeedType('breast');
+    // Auto-start the timer
+    if (!timerRunning) toggleTimer();
+    showToast('Nursing timer started');
+    return;
+  }
+  // Bottle — jump to log tab
+  showScreen('log');
+  setLogType('feed');
+  setFeedType('bottle');
+}
+ 
+function quickSleepToggle() {
+  const icon = document.getElementById('quickSleepIcon');
+  const lbl = document.getElementById('quickSleepLbl');
+  if (!quickSleepStart) {
+    quickSleepStart = Date.now();
+    quickSleepTimer = setInterval(updateQuickSleepBtn, 1000);
+    updateQuickSleepBtn();
+    showToast('Sleep started');
+  } else {
+    const durationMins = Math.round((Date.now() - quickSleepStart) / 60000);
+    clearInterval(quickSleepTimer);
+    quickSleepTimer = null;
+    if (durationMins < 1) {
+      quickSleepStart = null;
+      icon.textContent = '😴';
+      lbl.textContent = 'Baby sleeping';
+      showToast('Too short to log');
+      return;
+    }
+    const entry = { id: genId(), ts: new Date(quickSleepStart).toISOString(), type: 'sleep', durationMins, location: 'Crib', loggedBy: myName(), notes: '' };
+    quickSleepStart = null;
+    icon.textContent = '😴';
+    lbl.textContent = 'Baby sleeping';
+    pushEntry(entry);
+    showToast(`Sleep logged: ${formatDuration(durationMins)}`, entry.id);
+  }
+}
+ 
+function updateQuickSleepBtn() {
+  if (!quickSleepStart) return;
+  const icon = document.getElementById('quickSleepIcon');
+  const lbl = document.getElementById('quickSleepLbl');
+  const mins = Math.floor((Date.now() - quickSleepStart) / 60000);
+  icon.textContent = '⏹️';
+  lbl.textContent = `Stop (${formatDuration(mins)})`;
+}
+ 
+ 
+// ── Smart render ──
+let _lastRenderHash = null;
+ 
+function stateHash() {
+  return state.length + '|' + (state.length ? state[state.length-1].id : '');
+}
+ 
+function renderTodayIfChanged() {
+  const h = stateHash();
+  if (h === _lastRenderHash) return;
+  _lastRenderHash = h;
+  renderToday();
+}
+ 
+ 
+ 
+// ── Drum picker ──
+const DRUM_MAX_LEFT = 60;
+const DRUM_MAX_RIGHT = 60;
+const DRUM_STEP = 1;
+ 
+let drumLeftVal = 0;
+let drumRightVal = 0;
+let breastMode = 'manual'; // 'manual' | 'timer'
+ 
+function setBreastMode(mode) {
+  breastMode = mode;
+  document.getElementById('breastModeManual').classList.toggle('active', mode === 'manual');
+  document.getElementById('breastModeTimer').classList.toggle('active', mode === 'timer');
+  document.getElementById('liveTimerSection').style.display = mode === 'timer' ? '' : 'none';
+  // Show/hide the duration pickers
+  const durationSection = document.querySelector('.duration-row') ? document.querySelector('.duration-row').closest('.form-section') : null;
+  if (durationSection) durationSection.style.display = mode === 'manual' ? '' : 'none';
+}
+ 
+function buildDrum(listId, wrapId, maxVal, step, onChange) {
+  const list = document.getElementById(listId);
+  const wrap = document.getElementById(wrapId);
+  if (!list || !wrap) return;
+ 
+  const items = [];
+  for (let v = 0; v <= maxVal; v += step) items.push(v);
+ 
+  list.innerHTML = items.map((v,i) =>
+    `<div class="drum-item" data-val="${v}" data-idx="${i}">${v} min</div>`
+  ).join('');
+ 
+  // Add selector highlight div
+  if (!wrap.querySelector('.drum-selector')) {
+    const sel = document.createElement('div');
+    sel.className = 'drum-selector';
+    wrap.appendChild(sel);
+  }
+ 
+  const itemH = 44;
+  let currentIdx = 0;
+  let startY = 0;
+  let startScroll = 0;
+  let isDragging = false;
+  let velocity = 0;
+  let lastY = 0;
+  let lastTime = 0;
+  let momentumTimer = null;
+ 
+  function scrollTo(idx, animate) {
+    idx = Math.max(0, Math.min(items.length - 1, idx));
+    currentIdx = idx;
+    const offset = idx * itemH;
+    if (animate) {
+      list.style.transition = 'transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94)';
+    } else {
+      list.style.transition = 'none';
+    }
+    list.style.transform = `translateY(-${offset}px)`;
+    list.querySelectorAll('.drum-item').forEach((el, i) => el.classList.toggle('selected', i === idx));
+    onChange(items[idx]);
+  }
+ 
+  function onStart(y) {
+    if (momentumTimer) clearTimeout(momentumTimer);
+    isDragging = true;
+    startY = y;
+    startScroll = currentIdx * itemH;
+    lastY = y;
+    lastTime = Date.now();
+    velocity = 0;
+    list.style.transition = 'none';
+  }
+ 
+  function onMove(y) {
+    if (!isDragging) return;
+    const now = Date.now();
+    const dt = now - lastTime;
+    if (dt > 0) velocity = (lastY - y) / dt;
+    lastY = y;
+    lastTime = now;
+    const delta = startY - y;
+    const rawIdx = (startScroll + delta) / itemH;
+    scrollTo(Math.round(rawIdx), false);
+  }
+ 
+  function onEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    // momentum
+    const momentum = velocity * 80;
+    const targetIdx = Math.round((currentIdx * itemH + momentum) / itemH);
+    scrollTo(targetIdx, true);
+  }
+ 
+  // Touch
+  wrap.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientY); }, { passive: false });
+  wrap.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientY); }, { passive: false });
+  wrap.addEventListener('touchend', () => onEnd());
+ 
+  // Mouse
+  wrap.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientY); });
+  window.addEventListener('mousemove', e => { if (isDragging) onMove(e.clientY); });
+  window.addEventListener('mouseup', () => { if (isDragging) onEnd(); });
+ 
+  // Init
+  scrollTo(0, false);
+  return { scrollTo };
+}
+ 
+let drumLeftCtrl = null;
+let drumRightCtrl = null;
+ 
+function initDrums() {
+  drumLeftVal = 0;
+  drumRightVal = 0;
+  const leftEl = document.getElementById('drumLeftList');
+  const rightEl = document.getElementById('drumRightList');
+  if (!leftEl || !rightEl) return;
+  drumLeftCtrl = buildDrum('drumLeftList', 'drumLeft', DRUM_MAX_LEFT, DRUM_STEP, v => {
+    drumLeftVal = v;
+  });
+  drumRightCtrl = buildDrum('drumRightList', 'drumRight', DRUM_MAX_RIGHT, DRUM_STEP, v => {
+    drumRightVal = v;
+  });
+}
+ 
+// ── Night mode ──
+const NIGHT_START = 21; // 9pm
+const NIGHT_END = 6;    // 6am
+ 
+function isNightTime() {
+  const h = new Date().getHours();
+  return h >= NIGHT_START || h < NIGHT_END;
+}
+ 
+function applyNightMode() {
+  const night = isNightTime();
+  document.body.classList.toggle('night-mode', night);
+  const banner = document.getElementById('nightBanner');
+  if (banner) banner.style.display = night ? '' : 'none';
+}
+ 
+setInterval(applyNightMode, 60000);
+applyNightMode();
+ 
+// ── Retroactive time helpers ──
+function nowLocal() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+ 
+function getEntryTs(fieldId) {
+  const val = document.getElementById(fieldId).value;
+  if (val) return new Date(val).toISOString();
+  return new Date().toISOString();
+}
+ 
+// ── Diaper detail state ──
+let diaperDetail = { color: null, consistency: [], flags: [] };
+ 
+function setDiaperType(btn, type) {
+  currentDiaperType = type;
+  btn.closest('.seg-ctrl').querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const isDirty = type === 'dirty' || type === 'both';
+  document.getElementById('stoolDetailSection').style.display = isDirty ? '' : 'none';
+  document.getElementById('stoolConsistencySection').style.display = isDirty ? '' : 'none';
+  document.getElementById('stoolFlagsSection').style.display = isDirty ? '' : 'none';
+}
+ 
+function toggleChip(btn, field, value) {
+  if (field === 'flag' || field === 'consistency') {
+    // multi-select
+    if (!Array.isArray(diaperDetail[field])) diaperDetail[field] = [];
+    const idx = diaperDetail[field].indexOf(value);
+    if (idx === -1) { diaperDetail[field].push(value); btn.classList.add('active'); }
+    else { diaperDetail[field].splice(idx, 1); btn.classList.remove('active'); }
+  } else {
+    // single-select (color)
+    if (diaperDetail[field] === value) {
+      diaperDetail[field] = null; btn.classList.remove('active');
+    } else {
+      btn.closest('.detail-grid').querySelectorAll('.detail-chip').forEach(b => b.classList.remove('active'));
+      diaperDetail[field] = value; btn.classList.add('active');
+    }
+  }
+}
+ 
+// ── Analytics ──
+let analyticsRange = 7;
+ 
+function setRange(days, btn) {
+  analyticsRange = parseInt(days);
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAnalytics();
+}
+ 
+function renderAnalytics() {
+  const now = new Date();
+  const days = analyticsRange;
+  const buckets = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    const end = new Date(d); end.setHours(23, 59, 59, 999);
+    const dayEntries = state.filter(e => { const t = new Date(e.ts); return t >= d && t <= end; });
+    const label = days <= 7
+      ? d.toLocaleDateString([], { weekday: 'short' })
+      : days <= 30
+        ? d.toLocaleDateString([], { month: 'numeric', day: 'numeric' })
+        : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    buckets.push({
+      label,
+      feeds: dayEntries.filter(e => e.type === 'feed').length,
+      sleepMins: dayEntries.filter(e => e.type === 'sleep').reduce((s, e) => s + (e.durationMins || 0), 0),
+      diapers: dayEntries.filter(e => e.type === 'diaper').length,
+      wetDiapers: dayEntries.filter(e => e.type === 'diaper' && (e.diaperType === 'wet' || e.diaperType === 'both')).length,
+      dirtyDiapers: dayEntries.filter(e => e.type === 'diaper' && (e.diaperType === 'dirty' || e.diaperType === 'both')).length,
+      breastMins: dayEntries.filter(e => e.type === 'feed' && e.feedType === 'breast').reduce((s, e) => s + (e.leftMins || 0) + (e.rightMins || 0), 0),
+    });
+  }
+ 
+  const avgFeeds = (buckets.reduce((s, b) => s + b.feeds, 0) / days).toFixed(1);
+  const avgSleep = formatDuration(Math.round(buckets.reduce((s, b) => s + b.sleepMins, 0) / days));
+  const avgDiapers = (buckets.reduce((s, b) => s + b.diapers, 0) / days).toFixed(1);
+ 
+  document.getElementById('analyticsStats').innerHTML = `
+    <div class="analytics-tile"><div class="analytics-val">${avgFeeds}</div><div class="analytics-lbl">avg feeds/day</div></div>
+    <div class="analytics-tile"><div class="analytics-val">${avgSleep}</div><div class="analytics-lbl">avg sleep/day</div></div>
+    <div class="analytics-tile"><div class="analytics-val">${avgDiapers}</div><div class="analytics-lbl">avg diapers/day</div></div>`;
+ 
+  renderBarChart('feedChart', buckets, 'feeds', 'bar-feed');
+  renderBarChart('sleepChart', buckets, 'sleepMins', 'bar-sleep', v => formatDuration(v));
+  renderBarChart('diaperChart', buckets, 'diapers', 'bar-diaper');
+ 
+  // Doctor summary
+  const totalFeeds = buckets.reduce((s,b) => s+b.feeds, 0);
+  const totalWet = buckets.reduce((s,b) => s+b.wetDiapers, 0);
+  const totalDirty = buckets.reduce((s,b) => s+b.dirtyDiapers, 0);
+  const totalSleepH = (buckets.reduce((s,b) => s+b.sleepMins, 0) / 60).toFixed(1);
+  const totalBreastMins = buckets.reduce((s,b) => s+b.breastMins, 0);
+  const babyAge = getBabyAge();
+ 
+  const summaryText = `Baby age: ${babyAge}
+Period: last ${days} days
+Feeds: ${totalFeeds} total (avg ${avgFeeds}/day)
+Breastfeeding: ${formatDuration(totalBreastMins)} total
+Sleep: ${totalSleepH}h total (avg ${avgSleep}/day)
+Wet diapers: ${totalWet} (avg ${(totalWet/days).toFixed(1)}/day)
+Dirty diapers: ${totalDirty} (avg ${(totalDirty/days).toFixed(1)}/day)`;
+ 
+  document.getElementById('docSummary').innerHTML = `
+    <div class="doc-summary-title">
+      <span>📋 Doctor summary</span>
+      <button class="doc-copy-btn" onclick="copyDocSummary()">Copy ↗</button>
+    </div>
+    <div class="doc-row"><span class="doc-key">Baby age</span><span class="doc-val">${babyAge}</span></div>
+    <div class="doc-row"><span class="doc-key">Period</span><span class="doc-val">Last ${days} days</span></div>
+    <div class="doc-row"><span class="doc-key">Total feeds</span><span class="doc-val">${totalFeeds} (avg ${avgFeeds}/day)</span></div>
+    <div class="doc-row"><span class="doc-key">Breastfeeding</span><span class="doc-val">${formatDuration(totalBreastMins)}</span></div>
+    <div class="doc-row"><span class="doc-key">Total sleep</span><span class="doc-val">${totalSleepH}h (avg ${avgSleep}/day)</span></div>
+    <div class="doc-row"><span class="doc-key">Wet diapers</span><span class="doc-val">${totalWet} (avg ${(totalWet/days).toFixed(1)}/day)</span></div>
+    <div class="doc-row"><span class="doc-key">Dirty diapers</span><span class="doc-val">${totalDirty} (avg ${(totalDirty/days).toFixed(1)}/day)</span></div>
+    <div id="docSummaryText" style="display:none">${summaryText}</div>`;
+}
+ 
+function copyDocSummary() {
+  const text = document.getElementById('docSummaryText').innerText;
+  navigator.clipboard.writeText(text).then(() => showToast('Summary copied!')).catch(() => {
+    const el = document.getElementById('docSummaryText');
+    el.style.display = '';
+    const r = document.createRange(); r.selectNode(el);
+    window.getSelection().removeAllRanges(); window.getSelection().addRange(r);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    el.style.display = 'none';
+    showToast('Summary copied!');
+  });
+}
+ 
+function renderBarChart(id, buckets, key, cls, fmt) {
+  const vals = buckets.map(b => b[key]);
+  const max = Math.max(...vals, 1);
+  const el = document.getElementById(id);
+  el.innerHTML = buckets.map(b => {
+    const val = b[key];
+    const h = Math.max(2, Math.round((val / max) * 68));
+    const label = fmt ? fmt(val) : val;
+    return `<div class="bar-col">
+      <div class="bar-val">${val > 0 ? label : ''}</div>
+      <div class="bar ${cls}" style="height:${h}px"></div>
+      <div class="bar-lbl">${b.label}</div>
+    </div>`;
+  }).join('');
+}
+ 
 // ── Init ──
 window.addEventListener('online',()=>drainOutbound());
 document.getElementById('headerTitle').textContent=settings.babyName||'Baby Log';
 renderToday();
 fetchRemote(true);
 pollTimer=setInterval(()=>fetchRemote(false),POLL_MS);
+// Keep sync label updated every minute
+setInterval(updateLastSyncLabel, 60000);
 </script>
 </body>
 </html>
+ 
