@@ -1475,61 +1475,29 @@ function undoQuick(id) {
 }
 
 function quickDiaper(type) {
-  const entry = { id: genId(), ts: new Date().toISOString(), type: 'diaper', diaperType: type, loggedBy: myName(), notes: '' };
-  pushEntry(entry);
-  const labels = { wet: 'Wet diaper logged', dirty: 'Dirty diaper logged', both: 'Wet & dirty logged' };
-  showToast(labels[type] || 'Diaper logged', entry.id);
+  showScreen('log');
+  setLogType('diaper');
+  // Pre-select the diaper type
+  currentDiaperType = type;
+  document.querySelectorAll('#form-diaper > .form-section:first-of-type .seg-btn').forEach(b => {
+    const on = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', on.includes("'" + type + "'"));
+  });
+  const isDirty = type === 'dirty' || type === 'both';
+  document.getElementById('stoolDetailSection').style.display = isDirty ? '' : 'none';
+  document.getElementById('stoolConsistencySection').style.display = isDirty ? '' : 'none';
+  document.getElementById('stoolFlagsSection').style.display = isDirty ? '' : 'none';
 }
 
 function quickFeed(type) {
-  if (type === 'breast') {
-    // Jump to log tab with breast timer pre-started
-    showScreen('log');
-    setLogType('feed');
-    setFeedType('breast');
-    setBreastMode('timer');
-    // Auto-start the timer
-    if (!timerRunning) toggleTimer();
-    showToast('Nursing timer started');
-    return;
-  }
-  // Bottle — jump to log tab
   showScreen('log');
   setLogType('feed');
-  setFeedType('bottle');
+  setFeedType(type);
 }
 
 function quickSleepToggle() {
-  const icon = document.getElementById('quickSleepIcon');
-  const lbl = document.getElementById('quickSleepLbl');
-  if (!quickSleepStart) {
-    quickSleepStart = Date.now();
-    store.set('quickSleepStart', quickSleepStart);
-    quickSleepTimer = setInterval(updateQuickSleepBtn, 1000);
-    updateQuickSleepBtn();
-    showToast('Sleep started');
-  } else {
-    const durationMins = Math.round((Date.now() - quickSleepStart) / 60000);
-    clearInterval(quickSleepTimer);
-    quickSleepTimer = null;
-    if (durationMins < 1) {
-      quickSleepStart = null;
-      store.set('quickSleepStart', null);
-      icon.textContent = '😴';
-      lbl.textContent = 'Baby sleeping';
-      updateQuickSleepBtn();
-      showToast('Too short to log');
-      return;
-    }
-    const entry = { id: genId(), ts: new Date(quickSleepStart).toISOString(), type: 'sleep', durationMins, location: 'Crib', loggedBy: myName(), notes: '' };
-    quickSleepStart = null;
-    store.set('quickSleepStart', null);
-    icon.textContent = '😴';
-    lbl.textContent = 'Baby sleeping';
-    updateQuickSleepBtn();
-    pushEntry(entry);
-    showToast(`Sleep logged: ${formatDuration(durationMins)}`, entry.id);
-  }
+  showScreen('log');
+  setLogType('sleep');
 }
 
 function updateQuickSleepBtn() {
