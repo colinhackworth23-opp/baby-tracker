@@ -290,6 +290,15 @@ body.night-mode {
 .bar-feed { background: var(--blue); }
 .bar-sleep { background: var(--purple); }
 .bar-diaper { background: var(--green); }
+.bar-pee { background: var(--blue); }
+.bar-poop { background: var(--amber); }
+.bar-pair { display: flex; align-items: flex-end; gap: 2px; width: 100%; justify-content: center; }
+.bar-pair .bar { width: 45%; }
+.bar-val-pair { display: flex; gap: 3px; font-size: 9px; font-weight: 700; }
+.bar-val-pee { color: var(--blue); }
+.bar-val-poop { color: var(--amber); }
+.chart-legend { display: flex; gap: 14px; font-size: 11px; color: var(--text2); font-weight: 600; margin-bottom: 8px; }
+.legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: baseline; }
 .analytics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px 16px 0; }
 .analytics-tile { background: var(--bg); border: none; box-shadow: var(--shadow); border-radius: var(--radius); padding: 10px 12px; text-align: center; }
 .analytics-val { font-size: 20px; font-weight: 700; color: var(--text); font-family: ui-rounded, -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -480,8 +489,8 @@ body.night-mode {
       </div>
       <div id="bottle-form" style="display:none;">
         <div class="form-section">
-          <label class="form-label">Amount (oz)</label>
-          <input class="form-input" type="number" id="bottleOz" placeholder="e.g. 3" min="0" max="16" step="0.5" inputmode="decimal">
+          <label class="form-label">Amount (mL)</label>
+          <input class="form-input" type="number" id="bottleOz" placeholder="e.g. 90" min="0" max="350" step="5" inputmode="numeric">
         </div>
       </div>
       <div class="form-section">
@@ -598,7 +607,11 @@ body.night-mode {
       <div class="bar-chart" id="sleepChart"></div>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">Diapers per day</div>
+      <div class="chart-title">Pees &amp; poops per day</div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:var(--blue);"></span>💧 Pees</span>
+        <span><span class="legend-dot" style="background:var(--amber);"></span>💩 Poops</span>
+      </div>
       <div class="bar-chart" id="diaperChart"></div>
     </div>
     <div class="doc-summary" id="docSummary"></div>
@@ -713,7 +726,7 @@ function showScreen(name) {
   if(name==='log') {
     resetLogForms();
     // Set feedTime after paint so it's always current
-    setTimeout(() => { const ft=document.getElementById('feedTime'); if(ft) ft.value=nowLocal(); }, 0);
+    setTimeout(() => { if(editingId) return; const ft=document.getElementById('feedTime'); if(ft) ft.value=nowLocal(); }, 0);
   }
 }
 
@@ -801,7 +814,7 @@ function entryRow(e) {
       sub=parts.length?parts.join(', '):'duration not recorded';
     } else {
       main=ft==='bottle'?'Bottle fed':'Formula';
-      sub=e.oz?`${e.oz} oz`:'';
+      sub=e.ml?`${e.ml} mL`:e.oz?`${e.oz} oz`:'';
     }
     if(e.notes) sub+=(sub?' · ':'')+e.notes;
   } else if(e.type==='sleep'){
@@ -820,28 +833,36 @@ function entryRow(e) {
 
   return `<div class="log-entry">
     <div class="log-entry-icon">${icon}</div>
-    <div class="log-entry-body">
+    <div class="log-entry-body" onclick="editEntry('${e.id}')" style="cursor:pointer;">
       <div class="log-entry-main">${main} ${badge} ${whoBadge}</div>
       ${sub?`<div class="log-entry-sub">${sub}</div>`:''}
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
       <div class="log-entry-time">${timeStr}</div>
       <div class="log-entry-time" style="font-size:9px;">${dateStr}</div>
-      ${isMe?`<button class="log-delete" onclick="deleteEntry('${e.id}')">✕</button>`:'<div style="height:24px;"></div>'}
+      <button class="log-delete" onclick="deleteEntry('${e.id}')">✕</button>
     </div>
   </div>`;
 }
 
-function deleteEntry(id) {
+function deleteEntry(id, skipConfirm) {
+  if(!skipConfirm && !confirm('Delete this entry?')) return;
+  const orig = state.find(e=>e.id===id);
   state=state.filter(e=>e.id!==id);
   store.set('entries',state);
   // Tombstone so the entry doesn't resurrect from the sheet on next sync
   tombstones.push(id);
   if(tombstones.length>500) tombstones=tombstones.slice(-500);
   store.set('tombstones',tombstones);
-  // Also remove from outbound queue if not yet sent
+  // Remove any pending append for this id
   outboundQueue=outboundQueue.filter(q=>q.id!==id);
+  // Sync the deletion: soft-delete marker replaces the sheet row (partner's phone removes it too)
+  if(orig){
+    const del={...orig, deleted:true, updatedAt:new Date().toISOString()};
+    outboundQueue.push({id:del.id,ts:del.ts,type:del.type,detail:'[deleted]',notes:'',loggedBy:del.loggedBy||myName(),json:JSON.stringify(del),action:'update',tries:0});
+  }
   store.set('outboundQueue',outboundQueue);
+  drainOutbound();
   _lastRenderHash=null;
   renderToday(); renderHistory();
 }
@@ -860,6 +881,10 @@ let timerInterval=null,timerRunning=false,timerSide='left',leftMs=0,rightMs=0,si
 let sleepTimerInterval=null,sleepTimerRunning=false,sleepTimerStart=null;
 
 function resetLogForms(){
+  editingId=null;
+  const fb=document.querySelector('#form-feed .save-btn'); if(fb) fb.textContent='Log Feed';
+  const sb=document.querySelector('#form-sleep .save-btn'); if(sb) sb.textContent='Log Sleep';
+  const db=document.querySelector('#form-diaper .save-btn'); if(db) db.textContent='Log Diaper';
   const _bt = store.get('breastTimer', null);
   if (_bt && _bt.running && _bt.sideStartMs) {
     // Resume in-flight nursing timer (survived app closure/navigation)
@@ -1030,12 +1055,12 @@ function saveFeed(){
     clearBreastTimer();
     leftMs=0; rightMs=0;
   } else {
-    const oz=parseFloat(document.getElementById('bottleOz').value);
-    if(!oz||oz<=0){alert('Enter an amount in oz.');return;}
-    entry.oz=oz;
+    const ml=parseFloat(document.getElementById('bottleOz').value);
+    if(!ml||ml<=0){alert('Enter an amount in mL.');return;}
+    entry.ml=ml;
   }
   entry.notes=document.getElementById('feedNotes').value.trim();
-  pushEntry(entry); showScreen('today');
+  finishSave(entry);
 }
 
 function saveSleep(){
@@ -1048,7 +1073,7 @@ function saveSleep(){
   }
   if(dur<=0){alert('Please record a sleep duration.');return;}
   const entry={id:genId(),ts:getEntryTs('sleepTime'),type:'sleep',durationMins:dur,location:currentSleepLoc,loggedBy:myName(),notes:document.getElementById('sleepNotes').value.trim()};
-  pushEntry(entry); showScreen('today');
+  finishSave(entry);
 }
 
 function saveDiaper(){
@@ -1060,7 +1085,95 @@ function saveDiaper(){
     stoolConsistency: diaperDetail.consistency && diaperDetail.consistency.length ? [...diaperDetail.consistency] : null,
     stoolFlags: diaperDetail.flags.length ? [...diaperDetail.flags] : null,
   };
-  pushEntry(entry); showScreen('today');
+  finishSave(entry);
+}
+
+function finishSave(entry){
+  if(editingId){
+    const idx=state.findIndex(x=>x.id===editingId);
+    if(idx!==-1){
+      const orig=state[idx];
+      entry.id=orig.id;
+      entry.loggedBy=orig.loggedBy||entry.loggedBy;
+      entry.updatedAt=new Date().toISOString();
+      state[idx]=entry;
+      store.set('entries',state);
+      _lastRenderHash=null;
+      enqueueUpdate(entry);
+      editingId=null;
+      showScreen('today');
+      showToast('Entry updated');
+      return;
+    }
+    editingId=null;
+  }
+  pushEntry(entry);
+  showScreen('today');
+}
+
+function enqueueUpdate(entry){
+  outboundQueue.push({...entryToRow(entry),action:'update',tries:0});
+  store.set('outboundQueue',outboundQueue);
+  setSyncStatus('loading');
+  drainOutbound();
+}
+
+function editEntry(id){
+  const e = state.find(x=>x.id===id);
+  if(!e) return;
+  showScreen('log');
+  editingId = id;
+  document.getElementById('headerSub').textContent='Edit entry';
+  document.querySelectorAll('#form-feed .save-btn, #form-sleep .save-btn, #form-diaper .save-btn').forEach(b=>b.textContent='Save changes');
+  if(e.type==='feed'){
+    setLogType('feed');
+    setFeedType(e.feedType||'breast');
+    setTimeout(()=>{ const ft=document.getElementById('feedTime'); if(ft) ft.value=isoToLocal(e.ts); }, 10);
+    document.getElementById('feedNotes').value=e.notes||'';
+    if((e.feedType||'breast')==='breast'){
+      setBreastMode('manual');
+      // Drums init at ~80ms; position them after
+      setTimeout(()=>{
+        if(drumLeftCtrl&&drumLeftCtrl.scrollTo) drumLeftCtrl.scrollTo(e.leftMins||0,false);
+        if(drumRightCtrl&&drumRightCtrl.scrollTo) drumRightCtrl.scrollTo(e.rightMins||0,false);
+      },200);
+    } else {
+      // Legacy oz entries convert to mL for editing (rounded to 5)
+      const v = e.ml ? e.ml : (e.oz ? Math.round(e.oz*29.5735/5)*5 : '');
+      document.getElementById('bottleOz').value=v;
+    }
+  } else if(e.type==='sleep'){
+    setLogType('sleep');
+    const st=document.getElementById('sleepTime'); if(st) st.value=isoToLocal(e.ts);
+    const start=new Date(e.ts), end=new Date(start.getTime()+(e.durationMins||0)*60000);
+    const pad=n=>String(n).padStart(2,'0');
+    document.getElementById('sleepStart').value=`${pad(start.getHours())}:${pad(start.getMinutes())}`;
+    document.getElementById('sleepEnd').value=`${pad(end.getHours())}:${pad(end.getMinutes())}`;
+    document.getElementById('sleepNotes').value=e.notes||'';
+    currentSleepLoc=e.location||'Crib';
+    document.querySelectorAll('#form-sleep .seg-ctrl .seg-btn').forEach(b=>b.classList.toggle('active',b.textContent===currentSleepLoc));
+  } else {
+    setLogType('diaper');
+    currentDiaperType=e.diaperType||'wet';
+    document.querySelectorAll('#form-diaper > .form-section:first-of-type .seg-btn').forEach(b=>{
+      const on=b.getAttribute('onclick')||'';
+      b.classList.toggle('active', on.includes("'"+currentDiaperType+"'"));
+    });
+    const isDirty=currentDiaperType==='dirty'||currentDiaperType==='both';
+    document.getElementById('stoolDetailSection').style.display=isDirty?'':'none';
+    document.getElementById('stoolConsistencySection').style.display=isDirty?'':'none';
+    document.getElementById('stoolFlagsSection').style.display=isDirty?'':'none';
+    diaperDetail={
+      color:e.stoolColor||null,
+      consistency:Array.isArray(e.stoolConsistency)?[...e.stoolConsistency]:(e.stoolConsistency?[e.stoolConsistency]:[]),
+      flags:e.stoolFlags?[...e.stoolFlags]:[]
+    };
+    document.querySelectorAll('#stoolDetailSection .detail-chip').forEach(b=>{const on=b.getAttribute('onclick')||'';b.classList.toggle('active',!!diaperDetail.color&&on.includes("'"+diaperDetail.color+"'"));});
+    document.querySelectorAll('#stoolConsistencySection .detail-chip').forEach(b=>{const on=b.getAttribute('onclick')||'';b.classList.toggle('active',diaperDetail.consistency.some(v=>on.includes("'"+v+"'")));});
+    document.querySelectorAll('#stoolFlagsSection .detail-chip').forEach(b=>{const on=b.getAttribute('onclick')||'';b.classList.toggle('active',diaperDetail.flags.some(v=>on.includes("'"+v+"'")));});
+    const dt=document.getElementById('diaperTime'); if(dt) dt.value=isoToLocal(e.ts);
+    document.getElementById('diaperNotes').value=e.notes||'';
+  }
 }
 
 function pushEntry(e){
@@ -1073,7 +1186,7 @@ function pushEntry(e){
 function entryToRow(e){
   // Human-readable detail (kept for the Sheet view + backward compatibility)
   let detail='';
-  if(e.type==='feed') detail=e.feedType==='breast'?`L:${e.leftMins||0}m R:${e.rightMins||0}m`:`${e.feedType} ${e.oz||''}oz`.trim();
+  if(e.type==='feed') detail=e.feedType==='breast'?`L:${e.leftMins||0}m R:${e.rightMins||0}m`:(e.ml?`${e.feedType} ${e.ml}ml`:`${e.feedType} ${e.oz||''}oz`.trim());
   else if(e.type==='sleep') detail=`${formatDuration(e.durationMins)} @ ${e.location}`;
   else {
     detail=e.diaperType;
@@ -1143,21 +1256,42 @@ async function fetchRemote(manual=false){
 
 function mergeRemote(rows){
   const ids=new Set(state.map(e=>e.id));
-  let added=0;
+  let added=0, changed=0;
   rows.forEach(row=>{
     const[id,ts,type,detail,notes,loggedBy,json]=row;
-    if(!id||ids.has(id)||tombstones.includes(id)) return;
+    if(!id) return;
 
-    // Preferred path: full JSON blob (column 7). Bulletproof — no parsing.
+    // Preferred path: full JSON blob (column 7). Handles adds, edits, and deletions.
     if(json){
       try{
         const entry=JSON.parse(json);
         if(entry&&entry.id===id){
+          const localIdx=state.findIndex(x=>x.id===id);
+          if(entry.deleted){
+            // Partner deleted this entry — remove locally and tombstone
+            if(localIdx!==-1){ state.splice(localIdx,1); changed++; }
+            if(!tombstones.includes(id)){
+              tombstones.push(id);
+              if(tombstones.length>500) tombstones=tombstones.slice(-500);
+              store.set('tombstones',tombstones);
+            }
+            ids.add(id);
+            return;
+          }
+          if(localIdx!==-1){
+            // Exists locally — replace only if remote version is newer (last write wins)
+            const localU=state[localIdx].updatedAt||'';
+            const remoteU=entry.updatedAt||'';
+            if(remoteU&&remoteU>localU){ state[localIdx]=entry; changed++; }
+            return;
+          }
+          if(tombstones.includes(id)) return; // deleted here; don't resurrect
           state.push(entry); ids.add(id); added++;
           return;
         }
       }catch(err){ /* fall through to legacy string parse */ }
     }
+    if(ids.has(id)||tombstones.includes(id)) return;
 
     // Legacy path: reconstruct from the readable detail string (pre-JSON rows)
     const entry={id,ts,type,notes:notes||'',loggedBy:loggedBy||'?'};
@@ -1170,7 +1304,9 @@ function mergeRemote(rows){
       } else {
         const p=(detail||'').split(' ');
         entry.feedType=p[0]||'bottle';
-        entry.oz=p[1]?parseFloat(p[1]):0;
+        const amt=p[1]?parseFloat(p[1]):0;
+        if(p[1]&&p[1].toLowerCase().includes('ml')) entry.ml=amt;
+        else entry.oz=amt;
       }
     } else if(type==='sleep'){
       const loc=(detail||'').match(/@\s*(.+)$/);
@@ -1190,7 +1326,7 @@ function mergeRemote(rows){
     }
     state.push(entry); ids.add(id); added++;
   });
-  if(added>0) store.set('entries',state);
+  if(added>0||changed>0){ store.set('entries',state); _lastRenderHash=null; }
 }
 
 function setSyncStatus(status){
@@ -1331,7 +1467,7 @@ function showToast(msg, undoId) {
 }
 
 function undoQuick(id) {
-  deleteEntry(id);
+  deleteEntry(id, true);
   const t = document.getElementById('quickToast');
   t.textContent = 'Entry removed';
   if (_toastTimer) clearTimeout(_toastTimer);
@@ -1573,6 +1709,14 @@ setInterval(applyNightMode, 60000);
 applyNightMode();
 
 // ── Retroactive time helpers ──
+let editingId = null;
+
+function isoToLocal(iso) {
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function nowLocal() {
   const d = new Date();
   const pad = n => String(n).padStart(2,'0');
@@ -1656,14 +1800,18 @@ function renderAnalytics() {
   const avgSleep = formatDuration(Math.round(buckets.reduce((s, b) => s + b.sleepMins, 0) / days));
   const avgDiapers = (buckets.reduce((s, b) => s + b.diapers, 0) / days).toFixed(1);
 
+  const avgPees = (buckets.reduce((s, b) => s + b.wetDiapers, 0) / days).toFixed(1);
+  const avgPoops = (buckets.reduce((s, b) => s + b.dirtyDiapers, 0) / days).toFixed(1);
   document.getElementById('analyticsStats').innerHTML = `
     <div class="analytics-tile"><div class="analytics-val">${avgFeeds}</div><div class="analytics-lbl">avg feeds/day</div></div>
     <div class="analytics-tile"><div class="analytics-val">${avgSleep}</div><div class="analytics-lbl">avg sleep/day</div></div>
-    <div class="analytics-tile"><div class="analytics-val">${avgDiapers}</div><div class="analytics-lbl">avg diapers/day</div></div>`;
+    <div class="analytics-tile"><div class="analytics-val">${avgDiapers}</div><div class="analytics-lbl">avg diapers/day</div></div>
+    <div class="analytics-tile"><div class="analytics-val" style="color:var(--blue);">💧 ${avgPees}</div><div class="analytics-lbl">avg pees/day</div></div>
+    <div class="analytics-tile"><div class="analytics-val" style="color:var(--amber);">💩 ${avgPoops}</div><div class="analytics-lbl">avg poops/day</div></div>`;
 
   renderBarChart('feedChart', buckets, 'feeds', 'bar-feed');
   renderBarChart('sleepChart', buckets, 'sleepMins', 'bar-sleep', v => formatDuration(v));
-  renderBarChart('diaperChart', buckets, 'diapers', 'bar-diaper');
+  renderPairedChart('diaperChart', buckets, 'wetDiapers', 'dirtyDiapers');
 
   // Doctor summary
   const totalFeeds = buckets.reduce((s,b) => s+b.feeds, 0);
@@ -1708,6 +1856,25 @@ function copyDocSummary() {
     el.style.display = 'none';
     showToast('Summary copied!');
   });
+}
+
+function renderPairedChart(id, buckets, keyA, keyB) {
+  const max = Math.max(...buckets.flatMap(b => [b[keyA], b[keyB]]), 1);
+  const el = document.getElementById(id);
+  const showVals = buckets.length <= 7;
+  el.innerHTML = buckets.map(b => {
+    const va = b[keyA], vb = b[keyB];
+    const ha = Math.max(2, Math.round((va / max) * 62));
+    const hb = Math.max(2, Math.round((vb / max) * 62));
+    return `<div class="bar-col">
+      ${showVals ? `<div class="bar-val-pair"><span class="bar-val-pee">${va}</span><span class="bar-val-poop">${vb}</span></div>` : ''}
+      <div class="bar-pair">
+        <div class="bar bar-pee" style="height:${ha}px"></div>
+        <div class="bar bar-poop" style="height:${hb}px"></div>
+      </div>
+      <div class="bar-lbl">${b.label}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderBarChart(id, buckets, key, cls, fmt) {
