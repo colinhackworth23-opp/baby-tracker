@@ -203,6 +203,40 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 .refresh-lbl { font-size: 11px; color: var(--text3); }
 .refresh-btn { font-size: 11px; font-weight: 600; color: var(--primary); background: none; border: none; padding: 4px 8px; min-height: 32px; }
 .spacer { height: 12px; }
+/* Milestones */
+.ms-band { margin: 14px 16px 0; }
+.ms-band-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; }
+.ms-band-title { font-size:11px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--text2); }
+.ms-now { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; background:var(--purple-bg); color:var(--purple); }
+.ms-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.ms-chip { background:var(--bg); border:none; box-shadow:var(--shadow); border-radius:var(--radius-sm);
+  padding:10px 10px; display:flex; align-items:center; gap:8px; text-align:left;
+  font-size:12px; font-weight:600; color:var(--text); min-height:44px;
+  transition: transform 0.15s cubic-bezier(0.2,0.9,0.3,1.2); }
+.ms-chip:active { transform:scale(0.97); }
+.ms-chip .ms-emoji { font-size:18px; flex-shrink:0; }
+.ms-chip.done { background:var(--green-bg); color:var(--green); box-shadow:none; }
+.ms-chip.done .ms-check { margin-left:auto; font-weight:800; }
+.ms-band.current .ms-chip:not(.done) { outline:1.5px solid var(--purple); outline-offset:-1.5px; }
+.ms-custom { display:block; width:calc(100% - 32px); margin:14px 16px 0; padding:12px; background:none;
+  border:1.5px dashed var(--border2); border-radius:var(--radius); font-size:13px; font-weight:600; color:var(--text2); }
+.ms-tl-item { padding:12px 14px; border-bottom:0.5px solid var(--border); display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
+.ms-tl-item:last-child { border-bottom:none; }
+.ms-tl-emoji { font-size:20px; flex-shrink:0; }
+.ms-tl-main { font-size:13px; font-weight:700; color:var(--text); }
+.ms-tl-sub { font-size:11px; color:var(--text2); margin-top:2px; line-height:1.4; }
+.ms-hint { margin:12px 16px 0; font-size:11px; color:var(--text3); line-height:1.5; }
+.sheet-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:60; display:none; }
+.sheet-backdrop.show { display:block; }
+.sheet { position:fixed; left:50%; bottom:0; transform:translate(-50%,100%); width:100%; max-width:430px; z-index:61;
+  background:var(--bg); border-radius:20px 20px 0 0; padding:18px 0 calc(env(safe-area-inset-bottom,16px) + 16px);
+  transition:transform 0.25s cubic-bezier(0.2,0.9,0.3,1), visibility 0s linear 0.25s; box-shadow:0 -8px 30px rgba(0,0,0,0.2); visibility:hidden; }
+.sheet.show { transform:translate(-50%,0); visibility:visible; transition:transform 0.25s cubic-bezier(0.2,0.9,0.3,1); }
+.sheet-title { font-size:17px; font-weight:700; color:var(--text); padding:0 16px; display:flex; align-items:center; gap:8px; }
+.sheet-row { display:flex; gap:10px; padding:14px 16px 0; }
+.sheet-row .timer-btn { flex:1; }
+.sheet-delete { background:none; border:none; color:var(--red); font-size:13px; font-weight:600; padding:14px 16px 0; display:block; }
+
 /* Touch feel */
 .save-btn, .timer-btn, .load-more-btn, .quick-btn, .range-btn, .detail-chip {
   transition: transform 0.15s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.15s ease, background 0.15s ease;
@@ -433,12 +467,11 @@ body.night-mode {
           <button class="seg-btn" onclick="setFeedType('formula')">Formula</button>
         </div>
       </div>
+      <div class="form-section">
+        <label class="form-label" id="feedTimeLabel">Starting time</label>
+        <input class="form-input" type="datetime-local" id="feedTime">
+      </div>
       <div id="breast-timer">
-        <!-- Starting time -->
-        <div class="form-section">
-          <label class="form-label">Starting time</label>
-          <input class="form-input" type="datetime-local" id="feedTime">
-        </div>
         <!-- Duration pickers -->
         <div class="form-section">
           <label class="form-label">Duration</label>
@@ -489,8 +522,8 @@ body.night-mode {
       </div>
       <div id="bottle-form" style="display:none;">
         <div class="form-section">
-          <label class="form-label">Amount (mL)</label>
-          <input class="form-input" type="number" id="bottleOz" placeholder="e.g. 90" min="0" max="350" step="5" inputmode="numeric">
+          <label class="form-label">Amount (oz)</label>
+          <input class="form-input" type="number" id="bottleOz" placeholder="e.g. 3" min="0" max="12" step="0.5" inputmode="decimal">
         </div>
       </div>
       <div class="form-section">
@@ -515,15 +548,6 @@ body.night-mode {
             <input class="form-input" type="time" id="sleepStart"></div>
           <div style="flex:1;"><label class="form-label" style="font-size:10px;">End</label>
             <input class="form-input" type="time" id="sleepEnd"></div>
-        </div>
-      </div>
-      <div class="form-section">
-        <label class="form-label">Location</label>
-        <div class="seg-ctrl">
-          <button class="seg-btn active" onclick="setSleepLoc(this)">Crib</button>
-          <button class="seg-btn" onclick="setSleepLoc(this)">Arms</button>
-          <button class="seg-btn" onclick="setSleepLoc(this)">Stroller</button>
-          <button class="seg-btn" onclick="setSleepLoc(this)">Car seat</button>
         </div>
       </div>
       <div class="form-section">
@@ -618,6 +642,36 @@ body.night-mode {
     <div class="spacer"></div>
   </div>
 
+  <!-- MILESTONES -->
+  <div class="screen" id="screen-milestones">
+    <div id="msTimeline"></div>
+    <div id="msBands"></div>
+    <button class="ms-custom" onclick="openMilestoneSheet('custom')">＋ Add a custom milestone</button>
+    <div class="ms-hint">Age ranges are typical windows based on CDC/AAP guidance, not deadlines. Every baby moves at her own pace — bring up anything you're unsure about at the next well visit.</div>
+    <div class="spacer"></div>
+  </div>
+  <div class="sheet-backdrop" id="msBackdrop" onclick="closeMilestoneSheet()"></div>
+  <div class="sheet" id="msSheet">
+    <div class="sheet-title"><span id="msSheetEmoji">⭐</span><span id="msSheetTitle">Milestone</span></div>
+    <div class="form-section" id="msNameWrap" style="display:none;">
+      <label class="form-label">Milestone</label>
+      <input class="form-input" type="text" id="msName" placeholder="e.g. First bath she loved" maxlength="40">
+    </div>
+    <div class="form-section">
+      <label class="form-label">Date</label>
+      <input class="form-input" type="date" id="msDate">
+    </div>
+    <div class="form-section">
+      <label class="form-label">Note (optional)</label>
+      <input class="form-input" type="text" id="msNote" placeholder="e.g. laughed at the dog">
+    </div>
+    <div class="sheet-row">
+      <button class="timer-btn" onclick="closeMilestoneSheet()">Cancel</button>
+      <button class="timer-btn primary" onclick="saveMilestone()">Save</button>
+    </div>
+    <button class="sheet-delete" id="msDeleteBtn" style="display:none;" onclick="deleteMilestone()">Delete milestone</button>
+  </div>
+
   <!-- HISTORY -->
   <div class="screen" id="screen-history">
     <div style="padding:12px 16px 0;">
@@ -681,6 +735,9 @@ body.night-mode {
     <button class="nav-btn" id="nav-analytics" onclick="showScreen('analytics')">
       <div class="nav-icon">📊</div><span class="nav-lbl">Trends</span>
     </button>
+    <button class="nav-btn" id="nav-milestones" onclick="showScreen('milestones')">
+      <div class="nav-icon">⭐</div><span class="nav-lbl">Milestones</span>
+    </button>
     <button class="nav-btn" id="nav-history" onclick="showScreen('history')">
       <div class="nav-icon">📋</div><span class="nav-lbl">History</span>
     </button>
@@ -716,13 +773,14 @@ function showScreen(name) {
   document.getElementById('screen-'+name).classList.add('active');
   const navEl = document.getElementById('nav-'+name);
   if (navEl) navEl.classList.add('active');
-  const subs={today:"Today's summary",log:"Log entry",history:"History",analytics:"Trends",settings:"Settings"};
+  const subs={today:"Today's summary",log:"Log entry",history:"History",analytics:"Trends",milestones:"Milestones",settings:"Settings"};
   document.getElementById('headerTitle').textContent = settings.babyName||'Baby Log';
   document.getElementById('headerSub').textContent = subs[name]||'';
   if(name==='today') renderToday();
   if(name==='history') { _historyDaysShown=3; renderHistory(); }
   if(name==='settings') renderSettings();
   if(name==='analytics') renderAnalytics();
+  if(name==='milestones') renderMilestones();
   if(name==='log') {
     resetLogForms();
     // Set feedTime after paint so it's always current
@@ -785,7 +843,7 @@ function renderToday() {
     hint=`<div class="callout c-blue" style="margin-top:12px;">No feeds logged yet today. Tap Log to get started.</div>`;
   document.getElementById('summaryCallout').innerHTML=hint;
 
-  const recent=[...state].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).slice(0,20);
+  const recent=[...state].filter(e=>e.type!=='milestone').sort((a,b)=>new Date(b.ts)-new Date(a.ts)).slice(0,20);
   const el=document.getElementById('recentLog');
   if(!recent.length){
     el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No entries yet. Tap Log below to get started.</div></div>`;
@@ -814,12 +872,11 @@ function entryRow(e) {
       sub=parts.length?parts.join(', '):'duration not recorded';
     } else {
       main=ft==='bottle'?'Bottle fed':'Formula';
-      sub=e.ml?`${e.ml} mL`:e.oz?`${e.oz} oz`:'';
+      sub=e.oz?`${e.oz} oz`:e.ml?`${Math.round(e.ml/29.5735*2)/2} oz`:'';
     }
     if(e.notes) sub+=(sub?' · ':'')+e.notes;
   } else if(e.type==='sleep'){
     icon='😴'; main=`Slept ${formatDuration(e.durationMins||0)}`;
-    badge=`<span class="badge badge-purple">${e.location||'crib'}</span>`;
     sub=e.notes||'';
   } else {
     icon=e.diaperType==='dirty'?'💩':e.diaperType==='both'?'💩💧':'💧';
@@ -905,6 +962,7 @@ function resetLogForms(){
     diaperDetail = { color: null, consistency: [], flags: [] };
     document.querySelectorAll('.detail-chip').forEach(c => c.classList.remove('active'));
     setTimeout(initDrums, 80);
+    resumeSleepTimer();
     return;
   }
   stopTimer(); leftMs=0; rightMs=0; timerSide='left'; updateTimerDisplay();
@@ -928,6 +986,8 @@ function resetLogForms(){
   document.getElementById('sleepEnd').value='';
   document.getElementById('sleepNotes').value='';
   document.getElementById('diaperNotes').value='';
+  // A sleep in progress survives navigation and app closure
+  resumeSleepTimer();
   // Set retroactive time defaults to now
   const nowStr = nowLocal();
   const st = document.getElementById('sleepTime'); if(st) st.value = nowStr;
@@ -957,6 +1017,8 @@ function setFeedType(type){
   });
   document.getElementById('breast-timer').style.display=type==='breast'?'':'none';
   document.getElementById('bottle-form').style.display=type!=='breast'?'':'none';
+  const tl=document.getElementById('feedTimeLabel');
+  if(tl) tl.textContent=type==='breast'?'Starting time':'Time given';
 }
 
 // setDiaperType moved to new diaper detail section above
@@ -1013,6 +1075,7 @@ function switchSide(){
 function toggleSleepTimer(){
   if(!sleepTimerRunning){
     sleepTimerRunning=true; sleepTimerStart=Date.now();
+    store.set('sleepTimerStart', sleepTimerStart);
     const now=new Date();
     document.getElementById('sleepStart').value=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     sleepTimerInterval=setInterval(()=>{
@@ -1022,11 +1085,26 @@ function toggleSleepTimer(){
     document.getElementById('sleepTimerLabel').textContent='Sleeping...';
   } else {
     stopSleepTimer();
+    store.set('sleepTimerStart', null);
     const now=new Date();
     document.getElementById('sleepEnd').value=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     document.getElementById('sleepTimerBtn').textContent='Restart';
     document.getElementById('sleepTimerLabel').textContent='Sleep ended';
   }
+}
+function resumeSleepTimer(){
+  const s=store.get('sleepTimerStart', null);
+  if(!s) return false;
+  sleepTimerStart=s; sleepTimerRunning=true;
+  if(sleepTimerInterval) clearInterval(sleepTimerInterval);
+  const pad=n=>String(n).padStart(2,'0');
+  const d=new Date(s);
+  const ss=document.getElementById('sleepStart'); if(ss) ss.value=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const tick=()=>{ const el=document.getElementById('sleepTimerDisplay'); if(el) el.textContent=msToMS(Date.now()-sleepTimerStart); };
+  tick(); sleepTimerInterval=setInterval(tick,1000);
+  const b=document.getElementById('sleepTimerBtn'); if(b) b.textContent='Stop';
+  const l=document.getElementById('sleepTimerLabel'); if(l) l.textContent='Sleeping...';
+  return true;
 }
 function stopSleepTimer(){
   if(sleepTimerInterval) clearInterval(sleepTimerInterval);
@@ -1055,16 +1133,21 @@ function saveFeed(){
     clearBreastTimer();
     leftMs=0; rightMs=0;
   } else {
-    const ml=parseFloat(document.getElementById('bottleOz').value);
-    if(!ml||ml<=0){alert('Enter an amount in mL.');return;}
-    entry.ml=ml;
+    const oz=parseFloat(document.getElementById('bottleOz').value);
+    if(!oz||oz<=0){alert('Enter an amount in oz.');return;}
+    entry.oz=oz;
   }
   entry.notes=document.getElementById('feedNotes').value.trim();
   finishSave(entry);
 }
 
 function saveSleep(){
+  if(sleepTimerRunning && !document.getElementById('sleepEnd').value){
+    const n=new Date(), pad=x=>String(x).padStart(2,'0');
+    document.getElementById('sleepEnd').value=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  }
   stopSleepTimer();
+  store.set('sleepTimerStart', null);
   const sv=document.getElementById('sleepStart').value,ev=document.getElementById('sleepEnd').value;
   let dur=0;
   if(sv&&ev){
@@ -1072,7 +1155,7 @@ function saveSleep(){
     let m=(eh*60+em)-(sh*60+sm); if(m<0) m+=24*60; dur=m;
   }
   if(dur<=0){alert('Please record a sleep duration.');return;}
-  const entry={id:genId(),ts:getEntryTs('sleepTime'),type:'sleep',durationMins:dur,location:currentSleepLoc,loggedBy:myName(),notes:document.getElementById('sleepNotes').value.trim()};
+  const entry={id:genId(),ts:getEntryTs('sleepTime'),type:'sleep',durationMins:dur,loggedBy:myName(),notes:document.getElementById('sleepNotes').value.trim()};
   finishSave(entry);
 }
 
@@ -1139,7 +1222,7 @@ function editEntry(id){
       },200);
     } else {
       // Legacy oz entries convert to mL for editing (rounded to 5)
-      const v = e.ml ? e.ml : (e.oz ? Math.round(e.oz*29.5735/5)*5 : '');
+      const v = e.oz ? e.oz : (e.ml ? Math.round(e.ml/29.5735*2)/2 : '');
       document.getElementById('bottleOz').value=v;
     }
   } else if(e.type==='sleep'){
@@ -1150,8 +1233,6 @@ function editEntry(id){
     document.getElementById('sleepStart').value=`${pad(start.getHours())}:${pad(start.getMinutes())}`;
     document.getElementById('sleepEnd').value=`${pad(end.getHours())}:${pad(end.getMinutes())}`;
     document.getElementById('sleepNotes').value=e.notes||'';
-    currentSleepLoc=e.location||'Crib';
-    document.querySelectorAll('#form-sleep .seg-ctrl .seg-btn').forEach(b=>b.classList.toggle('active',b.textContent===currentSleepLoc));
   } else {
     setLogType('diaper');
     currentDiaperType=e.diaperType||'wet';
@@ -1187,7 +1268,8 @@ function entryToRow(e){
   // Human-readable detail (kept for the Sheet view + backward compatibility)
   let detail='';
   if(e.type==='feed') detail=e.feedType==='breast'?`L:${e.leftMins||0}m R:${e.rightMins||0}m`:(e.ml?`${e.feedType} ${e.ml}ml`:`${e.feedType} ${e.oz||''}oz`.trim());
-  else if(e.type==='sleep') detail=`${formatDuration(e.durationMins)} @ ${e.location}`;
+  else if(e.type==='sleep') detail=`${formatDuration(e.durationMins)}`;
+  else if(e.type==='milestone') detail=e.label||'';
   else {
     detail=e.diaperType;
     const ex=[];
@@ -1249,6 +1331,7 @@ async function fetchRemote(manual=false){
     setSyncStatus('ok');
     renderTodayIfChanged();
     if(document.getElementById('screen-history').classList.contains('active')) renderHistory();
+    if(document.getElementById('screen-milestones').classList.contains('active')) renderMilestones();
   } catch {
     setSyncStatus('err');
   }
@@ -1310,7 +1393,7 @@ function mergeRemote(rows){
       }
     } else if(type==='sleep'){
       const loc=(detail||'').match(/@\s*(.+)$/);
-      entry.location=loc?loc[1].trim():'Crib';
+      if(loc) entry.location=loc[1].trim();
       const hm=(detail||'').match(/(\d+)h\s*(\d+)m/),m=(detail||'').match(/^(\d+)m/);
       if(hm) entry.durationMins=parseInt(hm[1])*60+parseInt(hm[2]);
       else if(m) entry.durationMins=parseInt(m[1]);
@@ -1365,7 +1448,7 @@ function loadMoreHistory() {
 }
 
 function renderHistory() {
-  let entries = [...state].sort((a,b) => new Date(b.ts) - new Date(a.ts));
+  let entries = [...state].filter(e=>e.type!=='milestone').sort((a,b) => new Date(b.ts) - new Date(a.ts));
   if (historyFilter !== 'all') entries = entries.filter(e => e.type === historyFilter);
   const el = document.getElementById('historyList');
   if (!entries.length) {
@@ -1795,7 +1878,8 @@ Feeds: ${totalFeeds} total (avg ${avgFeeds}/day)
 Breastfeeding: ${formatDuration(totalBreastMins)} total
 Sleep: ${totalSleepH}h total (avg ${avgSleep}/day)
 Wet diapers: ${totalWet} (avg ${(totalWet/days).toFixed(1)}/day)
-Dirty diapers: ${totalDirty} (avg ${(totalDirty/days).toFixed(1)}/day)`;
+Dirty diapers: ${totalDirty} (avg ${(totalDirty/days).toFixed(1)}/day)
+Milestones: ${msInPeriod(days)}`;
 
   document.getElementById('docSummary').innerHTML = `
     <div class="doc-summary-title">
@@ -1809,6 +1893,7 @@ Dirty diapers: ${totalDirty} (avg ${(totalDirty/days).toFixed(1)}/day)`;
     <div class="doc-row"><span class="doc-key">Total sleep</span><span class="doc-val">${totalSleepH}h (avg ${avgSleep}/day)</span></div>
     <div class="doc-row"><span class="doc-key">Wet diapers</span><span class="doc-val">${totalWet} (avg ${(totalWet/days).toFixed(1)}/day)</span></div>
     <div class="doc-row"><span class="doc-key">Dirty diapers</span><span class="doc-val">${totalDirty} (avg ${(totalDirty/days).toFixed(1)}/day)</span></div>
+    <div class="doc-row"><span class="doc-key">Milestones</span><span class="doc-val" style="text-align:right;max-width:60%;">${msInPeriod(days)}</span></div>
     <div id="docSummaryText" style="display:none">${summaryText}</div>`;
 }
 
@@ -1859,6 +1944,157 @@ function renderBarChart(id, buckets, key, cls, fmt) {
       <div class="bar-lbl">${b.label}</div>
     </div>`;
   }).join('');
+}
+
+
+// ── Milestones ──
+const MS_BANDS = [
+  { title:'2–4 months', lo:2, hi:4, items:[
+    ['social_smile','😊','Social smile'],['laugh','😂','Laughing'],['head_steady','💪','Holds head steady'],
+    ['coo','🗣️','Cooing'],['tracks','👀','Follows with eyes'],['hands_mouth','✋','Hands to mouth'] ]},
+  { title:'4–6 months', lo:4, hi:6, items:[
+    ['roll_tb','🔄','Rolls tummy → back'],['roll_bt','🔁','Rolls back → tummy'],['reach','🤲','Reaches & grabs'],
+    ['sit_support','🪑','Sits with support'],['solids','🥄','First solids'],['name','👂','Turns to her name'] ]},
+  { title:'6–9 months', lo:6, hi:9, items:[
+    ['sit','🧘','Sits unsupported'],['tooth','🦷','First tooth'],['babble','💬','Babbling (ba-ba, da-da)'],
+    ['crawl','🐛','Crawling'],['stranger','🙈','Stranger awareness'],['object_perm','🫣','Looks for hidden toys'] ]},
+  { title:'9–12 months', lo:9, hi:12, items:[
+    ['pull_stand','🧍','Pulls to stand'],['cruise','🚶','Cruises furniture'],['wave','👋','Waves bye-bye'],
+    ['pincer','🤏','Pincer grasp'],['first_word','🗨️','First word'],['first_steps','👣','First steps'] ]},
+];
+const MS_INDEX = {};
+MS_BANDS.forEach(b=>b.items.forEach(([k,em,lbl])=>MS_INDEX[k]={em,lbl}));
+
+let msEditing = null; // {id} when editing, {key} when adding
+
+function babyAgeMonthsAt(date){
+  if(!settings.birthdate) return null;
+  return (new Date(date) - new Date(settings.birthdate+'T00:00:00')) / (86400000*30.4375);
+}
+function ageLabelAt(ts){
+  const m = babyAgeMonthsAt(ts);
+  if(m===null) return '';
+  if(m < 0) return '';
+  const days = Math.floor((new Date(ts) - new Date(settings.birthdate+'T00:00:00'))/86400000);
+  if(days < 30) return `${Math.floor(days/7)}w old`;
+  const mm = Math.floor(m), wk = Math.floor((m-mm)*4.35);
+  return wk ? `${mm}m ${wk}w old` : `${mm}m old`;
+}
+function milestones(){ return state.filter(e=>e.type==='milestone').sort((a,b)=>new Date(a.ts)-new Date(b.ts)); }
+function msEmoji(e){ return (MS_INDEX[e.key]&&MS_INDEX[e.key].em) || '⭐'; }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function msInPeriod(days){
+  const cut = Date.now() - days*86400000;
+  const list = milestones().filter(e=>new Date(e.ts).getTime()>=cut).map(e=>e.label);
+  return list.length ? list.join(', ') : 'None logged';
+}
+
+function renderMilestones(){
+  const logged = milestones();
+  const byKey = {};
+  logged.forEach(e=>{ if(e.key && e.key!=='custom') byKey[e.key]=e; });
+  const age = babyAgeMonthsAt(new Date());
+
+  // Timeline
+  const tl = document.getElementById('msTimeline');
+  if(!logged.length){
+    tl.innerHTML = `<div class="callout c-purple" style="margin-top:12px;">Tap a milestone below when ${esc(settings.babyName||'baby')} hits it. Dates are editable, so you can log ones that already happened.</div>`;
+  } else {
+    tl.innerHTML = `<div class="section" style="margin-top:12px;"><div class="section-header">${esc(settings.babyName||'Baby')}'s milestones · ${logged.length}</div>` +
+      [...logged].reverse().map(e=>{
+        const d = new Date(e.ts).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+        const a = ageLabelAt(e.ts);
+        const meta = [d, a, e.loggedBy].filter(Boolean).join(' · ');
+        return `<div class="ms-tl-item" onclick="openMilestoneSheet(null,'${e.id}')">
+          <div class="ms-tl-emoji">${msEmoji(e)}</div>
+          <div><div class="ms-tl-main">${esc(e.label)}</div>
+          <div class="ms-tl-sub">${esc(meta)}${e.notes?'<br>'+esc(e.notes):''}</div></div></div>`;
+      }).join('') + `</div>`;
+  }
+
+  // Bands
+  document.getElementById('msBands').innerHTML = MS_BANDS.map(b=>{
+    const current = age!==null && age>=b.lo && age<b.hi;
+    const chips = b.items.map(([k,em,lbl])=>{
+      const done = byKey[k];
+      return done
+        ? `<button class="ms-chip done" onclick="openMilestoneSheet(null,'${done.id}')"><span class="ms-emoji">${em}</span><span>${lbl}</span><span class="ms-check">✓</span></button>`
+        : `<button class="ms-chip" onclick="openMilestoneSheet('${k}')"><span class="ms-emoji">${em}</span><span>${lbl}</span></button>`;
+    }).join('');
+    return `<div class="ms-band${current?' current':''}">
+      <div class="ms-band-head"><span class="ms-band-title">${b.title}</span>${current?'<span class="ms-now">Around now</span>':''}</div>
+      <div class="ms-grid">${chips}</div></div>`;
+  }).join('');
+}
+
+function todayDateStr(d){
+  d = d ? new Date(d) : new Date();
+  const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+
+function openMilestoneSheet(key, id){
+  let e = id ? state.find(x=>x.id===id) : null;
+  msEditing = e ? { id:e.id } : { key };
+  const k = e ? e.key : key;
+  const isCustom = k==='custom';
+  document.getElementById('msSheetEmoji').textContent = e ? msEmoji(e) : (MS_INDEX[k]?MS_INDEX[k].em:'⭐');
+  document.getElementById('msSheetTitle').textContent = e ? e.label : (isCustom ? 'Custom milestone' : MS_INDEX[k].lbl);
+  document.getElementById('msNameWrap').style.display = isCustom ? '' : 'none';
+  document.getElementById('msName').value = e && isCustom ? e.label : '';
+  document.getElementById('msDate').value = e ? todayDateStr(e.ts) : todayDateStr();
+  document.getElementById('msNote').value = e ? (e.notes||'') : '';
+  document.getElementById('msDeleteBtn').style.display = e ? '' : 'none';
+  document.getElementById('msBackdrop').classList.add('show');
+  document.getElementById('msSheet').classList.add('show');
+}
+
+function closeMilestoneSheet(){
+  document.getElementById('msBackdrop').classList.remove('show');
+  document.getElementById('msSheet').classList.remove('show');
+  msEditing = null;
+}
+
+function saveMilestone(){
+  if(!msEditing) return;
+  const dateVal = document.getElementById('msDate').value;
+  if(!dateVal){ alert('Pick a date.'); return; }
+  const ts = new Date(dateVal+'T12:00:00').toISOString(); // noon avoids timezone date-shift
+  const notes = document.getElementById('msNote').value.trim();
+
+  if(msEditing.id){
+    const idx = state.findIndex(x=>x.id===msEditing.id);
+    if(idx===-1){ closeMilestoneSheet(); return; }
+    const e = { ...state[idx], ts, notes, updatedAt:new Date().toISOString() };
+    if(e.key==='custom'){
+      const n = document.getElementById('msName').value.trim();
+      if(!n){ alert('Name the milestone.'); return; }
+      e.label = n;
+    }
+    state[idx] = e;
+    store.set('entries', state);
+    enqueueUpdate(e);
+    showToast('Milestone updated');
+  } else {
+    const k = msEditing.key;
+    let label = k==='custom' ? document.getElementById('msName').value.trim() : MS_INDEX[k].lbl;
+    if(!label){ alert('Name the milestone.'); return; }
+    const e = { id:genId(), ts, type:'milestone', key:k, label, notes, loggedBy:myName() };
+    pushEntry(e);
+    showToast(`${k==='custom'?'⭐':MS_INDEX[k].em} ${label} logged!`);
+  }
+  closeMilestoneSheet();
+  renderMilestones();
+}
+
+function deleteMilestone(){
+  if(!msEditing || !msEditing.id) return;
+  const id = msEditing.id;
+  if(!confirm('Delete this milestone?')) return;
+  closeMilestoneSheet();
+  deleteEntry(id, true);
+  renderMilestones();
 }
 
 // ── Init ──
